@@ -1,0 +1,220 @@
+:root{
+  --ink:#10241a;
+  --paper:#f1efe9;
+  --paper-2:#e7e4db;
+  --card:#ffffff;
+  --line:#dcd8cc;
+  --deep:#0e2a1c;
+  --deep-2:#163a26;
+  --mid:#1f6b3f;
+  --lime:#4ade60;
+  --lime-2:#33c34c;
+  --cream:#f6f3e6;
+  --muted:#6b6457;
+  --green-shape:#3DCB5A;
+}
+*{box-sizing:border-box;}
+html,body{margin:0; padding:0;}
+body{
+  background:var(--paper);
+  font-family:'Plus Jakarta Sans', sans-serif;
+  color:var(--ink);
+  min-height:100vh;
+}
+
+/* ---------------- HOST CHROME ---------------- */
+.topbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:18px 28px;
+  background:rgba(241,239,233,0.92);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand img{width:30px; height:30px; object-fit:contain;}
+.brand-text h1{font-size:15px; margin:0; font-weight:700; letter-spacing:.2px;}
+.brand-text p{font-size:12px; margin:0; color:var(--muted); font-family:'DM Mono',monospace;}
+.topbar-actions{display:flex; gap:10px; align-items:center;}
+.btn{
+  appearance:none; border:none; cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:13px;
+  padding:10px 16px; border-radius:999px;
+  transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.btn:active{transform:scale(0.96);}
+.btn-primary{background:var(--ink); color:var(--paper);}
+.btn-primary:hover{box-shadow:0 4px 14px rgba(16,36,26,0.25);}
+.btn-ghost{background:transparent; color:var(--ink); border:1.5px solid var(--line);}
+.btn-ghost:hover{border-color:var(--ink);}
+.btn-mini{
+  background:var(--card); color:var(--ink); border:1.5px solid var(--line);
+  font-size:12px; padding:8px 13px; border-radius:999px; font-weight:600; cursor:pointer;
+}
+.btn-mini:hover{border-color:var(--ink);}
+
+.intro{max-width:1240px; margin:0 auto; padding:34px 28px 6px;}
+.intro h2{font-size:26px; margin:0 0 8px; font-weight:800; letter-spacing:-.3px;}
+.intro p{font-size:14px; color:var(--muted); margin:0; max-width:660px; line-height:1.55;}
+.intro .tips{display:flex; gap:14px; margin-top:16px; flex-wrap:wrap;}
+.tip{
+  display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink);
+  background:var(--card); border:1px solid var(--line); padding:8px 13px; border-radius:10px;
+}
+.tip b{font-family:'DM Mono',monospace; font-weight:500; background:var(--paper-2); padding:1px 6px; border-radius:5px; font-size:11.5px;}
+
+/* ---------------- GRID OF SLOTS ---------------- */
+.grid{
+  max-width:1240px; margin:0 auto; padding:24px 28px 80px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:34px;
+}
+.slot{display:flex; flex-direction:column; gap:12px;}
+.slot-head{display:flex; align-items:center; justify-content:space-between;}
+.slot-label{display:flex; align-items:center; gap:9px;}
+.slot-index{
+  font-family:'DM Mono',monospace; font-size:11px; color:var(--muted);
+  border:1px solid var(--line); border-radius:6px; padding:2px 7px; background:var(--card);
+}
+.slot-name{font-size:13.5px; font-weight:700;}
+.slot-foot{display:flex; gap:8px;}
+
+/* The preview frame scales the true 1080px slide down to fit its column.
+   The slide itself always stays a real 1080x1080 internally. */
+.frame{
+  width:100%; aspect-ratio:1/1; position:relative;
+  border-radius:18px; overflow:hidden;
+  box-shadow:0 1px 2px rgba(16,36,26,.06), 0 14px 30px -16px rgba(16,36,26,.35);
+  border:1px solid var(--line); background:var(--deep);
+}
+.frame .scaler{position:absolute; top:0; left:0; width:1080px; height:1080px; transform-origin:top left;}
+
+input[type=file]{display:none;}
+
+/* ---------------- SLIDE BASE ---------------- */
+.slide{
+  width:1080px; height:1080px; position:relative; overflow:hidden;
+  font-family:'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing:antialiased;
+  background:var(--deep);
+}
+.slide [contenteditable="true"]{outline:none; cursor:text; border-radius:6px;}
+.slide [contenteditable="true"]:hover{box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
+.slide [contenteditable="true"]:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.55);}
+
+/* photo rendered as background (html2canvas honors background-size:cover, unlike object-fit) */
+.photo-bg{position:absolute; inset:0; background-size:cover; background-position:center; background-repeat:no-repeat;}
+
+.logo-chip{position:absolute; object-fit:contain; z-index:6; filter:drop-shadow(0 8px 18px rgba(0,0,0,.28));}
+
+.photo-swap-btn{
+  position:absolute; z-index:9;
+  background:rgba(14,42,28,0.65); color:#fff; border:1px solid rgba(255,255,255,.5);
+  font-size:13px; padding:9px 16px; border-radius:999px; font-weight:600;
+  cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; backdrop-filter:blur(4px);
+  top:40px; right:40px;
+}
+.blob{position:absolute; border-radius:50%;}
+
+/* ============== TYPE: cover ============== */
+.s-cover .photo-overlay{
+  position:absolute; inset:0; z-index:2;
+  background:linear-gradient(180deg, rgba(10,28,18,0.10) 0%, rgba(10,28,18,0.04) 45%, rgba(10,28,18,0.50) 100%);
+}
+/* decorative bottom wave — inline SVG (single, tiny) instead of a raster PNG */
+.s-cover .wave{
+  position:absolute; left:0; right:0; bottom:0; height:360px; z-index:3;
+  background:bottom / 100% 100% no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1080' height='360' viewBox='0 0 1080 360' preserveAspectRatio='none'%3E%3Cpath d='M0,120 C20,116 80,97 120,95 C160,93 190,101 240,110 C290,119 360,145 420,147 C480,149 550,131 600,121 C650,111 660,99 720,87 C780,75 900,52 960,49 C1020,46 1060,66 1080,70 L1080,360 L0,360 Z' fill='%233DCB5A'/%3E%3C/svg%3E");
+}
+.s-cover .band-text{
+  position:absolute; left:0; right:0; bottom:0; z-index:6;
+  padding:60px 64px 80px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:30px;
+}
+.s-cover .wordmark{font-weight:800; color:#fff; letter-spacing:-1px; max-width:560px;}
+.s-cover .wordmark .brand{display:block; font-size:84px; line-height:0.95;}
+.s-cover .wordmark .desc{display:block; font-size:46px; font-weight:700; line-height:1.04; margin-top:6px;}
+.s-cover .cover-right{display:flex; flex-direction:column; align-items:flex-end; gap:18px; max-width:340px;}
+/* Uses logo-shadow.png — the drop-shadow is baked into the image so it survives
+   the html2canvas PNG export (CSS filters do not). The box is oversized because
+   the asset carries transparent shadow-padding; negative margins trim that back
+   so the bowl keeps its size (~132px) and position. */
+.s-cover .cover-right .logo-chip{position:static; width:214px; height:214px; margin:-22px -32px -46px 0; filter:none;}
+.s-cover .tagline{font-weight:500; font-size:23px; line-height:1.45; color:#eafff0; text-align:right; padding-bottom:4px;}
+
+/* ============== SHARED ORGANIC BG (screenshot / qa / audience) ============== */
+.organic-bg{background:radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);}
+.organic-bg .blob-a{width:760px; height:760px; background:linear-gradient(135deg, var(--mid), var(--lime-2)); top:-280px; right:-260px; opacity:.9;}
+.organic-bg .blob-b{width:480px; height:480px; background:var(--deep-2); bottom:-200px; left:-160px; opacity:.9;}
+.organic-bg .blob-c{width:300px; height:300px; background:var(--lime); bottom:120px; right:-90px; opacity:.18;}
+
+.content-pad{position:relative; z-index:5; padding:88px 76px 0;}
+.eyebrow{font-family:'DM Mono',monospace; font-size:14px; color:var(--lime); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:22px; font-weight:500;}
+.logo-corner{left:64px; bottom:60px; width:104px; height:104px;}
+
+/* ============== TYPE: screenshot ============== */
+.s-screenshot .shot-frame{
+  /* Frame matches demo.png's 16:10 ratio (960x600) so the whole shot shows
+     un-cropped; contain guarantees nothing is clipped even if art is swapped. */
+  position:absolute; left:60px; top:240px; width:960px; height:600px; z-index:5;
+  border-radius:22px; border:8px solid rgba(255,255,255,.92);
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
+  background-color:#0f2e1e;
+  background-size:contain; background-position:center; background-repeat:no-repeat; overflow:hidden;
+}
+
+/* highlighted, load-bearing question (shared by qa + audience) */
+.hl-question{font-weight:800; line-height:1.42; letter-spacing:-1.5px; color:#fff; font-size:68px; max-width:780px; margin-bottom:34px;}
+.hl-question .mark{
+  background:var(--lime); color:var(--deep); padding:3px 14px; border-radius:9px;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone;
+  /* Keep a highlighted phrase on one line. html2canvas (export) doesn't support
+     box-decoration-break, so a mark that wraps renders as one giant box with the
+     preceding text dropped. Forcing the phrase to wrap as a unit avoids that. */
+  white-space:nowrap;
+}
+/* the answer, kept verbatim, as a supporting quote */
+.qa-answer{font-weight:500; font-size:25px; line-height:1.62; color:#f7f5ec; opacity:1; max-width:700px; position:relative; padding-left:32px; margin-top:40px;}
+.qa-answer b, .qa-answer strong{font-weight:800; color:#fff;}
+.qa-answer::before{content:"\201C"; position:absolute; left:-6px; top:-22px; font-size:64px; color:var(--lime); font-family:Georgia, serif; opacity:.85;}
+/* optional supporting bullets under the answer */
+.qa-bullets{list-style:none; margin:34px 0 0; padding:0; max-width:700px;}
+.qa-bullets li{position:relative; padding-left:34px; color:#f7f5ec; font-size:26px; font-weight:700; letter-spacing:-.3px; margin-bottom:18px;}
+.qa-bullets li:last-child{margin-bottom:0;}
+.qa-bullets li::before{content:""; position:absolute; left:0; top:11px; width:14px; height:14px; border-radius:4px; background:var(--lime);}
+
+/* ============== TYPE: audience ============== */
+.s-audience .aud-grid{position:relative; z-index:5; margin:48px 76px 0; display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:920px;}
+.s-audience .aud-card{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:22px; padding:30px 28px;}
+.s-audience .aud-card .num{font-family:'DM Mono',monospace; color:var(--lime); font-size:14px; margin-bottom:14px; display:block;}
+.s-audience .aud-card .label{color:#fff; font-size:27px; font-weight:700; letter-spacing:-.3px;}
+.s-audience .aud-caption{position:relative; z-index:5; margin:40px 76px 0; max-width:920px; color:#f7f5ec; font-size:26px; font-weight:600; line-height:1.5; letter-spacing:-.3px;}
+.s-audience .aud-caption .mark{background:var(--lime); color:var(--deep); padding:2px 10px; border-radius:7px;}
+
+/* ============== TYPE: qa — optional demo photo card ============== */
+.s-qa .demo-card{
+  position:absolute; right:64px; top:64px; width:300px; height:188px; z-index:6;
+  border-radius:16px; border:6px solid rgba(255,255,255,.92);
+  box-shadow:0 24px 50px -18px rgba(0,0,0,.6); transform:rotate(3deg);
+  background-size:cover; background-position:center; background-repeat:no-repeat; overflow:hidden;
+}
+
+/* ============== TYPE: closing ============== */
+.s-closing{background:radial-gradient(140% 140% at 50% 0%, var(--deep-2) 0%, var(--deep) 65%);}
+.s-closing .close-wrap{position:relative; z-index:5; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 90px;}
+.s-closing .logo-big{width:120px; height:120px; object-fit:contain; margin-bottom:30px; filter:drop-shadow(0 10px 20px rgba(0,0,0,.3));}
+.s-closing .close-head{font-weight:800; font-size:66px; color:#fff; line-height:1.05; letter-spacing:-1.5px;}
+.s-closing .close-sub{font-weight:600; font-size:30px; color:var(--lime); margin-top:6px;}
+.s-closing .credit{margin-top:46px; font-size:16px; color:var(--cream); opacity:.8; max-width:560px; line-height:1.5;}
+.s-closing .cta{margin-top:36px; background:var(--lime); color:var(--deep); font-weight:700; font-size:19px; padding:16px 30px; border-radius:999px; display:inline-block;}
+
+footer.host-footer{text-align:center; padding:10px 0 50px; color:var(--muted); font-size:12px;}
+
+/* transient "Saved" confirmation for edits written back to slides.js */
+#save-toast{position:fixed; right:22px; bottom:22px; z-index:9999; background:var(--deep); color:#fff;
+  font-size:14px; font-weight:600; padding:11px 18px; border-radius:12px; box-shadow:0 12px 30px -10px rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.14); opacity:0; transform:translateY(10px); pointer-events:none;
+  transition:opacity .18s ease, transform .18s ease;}
+#save-toast::before{content:"✓ "; color:var(--lime);}
+#save-toast.show{opacity:1; transform:translateY(0);}
+#save-toast.error{background:#7a1d1d;}
+#save-toast.error::before{content:"✕ "; color:#ffb4b4;}

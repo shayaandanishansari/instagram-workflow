@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+
+# Editor / IDE
+.idea/
+.vscode/
+
+# Local-only backup of the pre-refactor single-file version (not for publishing)
+_legacy/
+
+# Private artwork: keep the folder + its README tracked, but never publish the
+# images themselves. The app falls back to placeholders when they're absent, so
+# a fresh clone still builds. Un-ignore a specific safe file to ship a sample,
+# e.g.  !src/assets/logo.png
+src/assets/*
+!src/assets/README.md
+
+# Raw form submissions (the drop-zone). These contain PII — names, emails,
+# WhatsApp numbers, private team photos — so the contents are NEVER published.
+# Keep the folder + its README tracked so the workflow is documented on a
+# fresh clone. Drop each downloaded submission folder in here.
+submissions/*
+!submissions/README.md

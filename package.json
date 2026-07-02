@@ -1,0 +1,18 @@
+{
+  "name": "stu-instagram-studio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Data-driven 1080x1080 Instagram post studio for the Stu FYP deck.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "html2canvas": "^1.4.1"
+  },
+  "devDependencies": {
+    "vite": "^8.1.2"
+  }
+}
