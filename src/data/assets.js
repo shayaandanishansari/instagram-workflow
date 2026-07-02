@@ -1,26 +1,28 @@
 // ============================================================================
-// Asset loader — ASSET-AGNOSTIC.
+// Asset loader — ASSET-AGNOSTIC, per-project namespaced.
 // ----------------------------------------------------------------------------
-// Images are auto-discovered from src/assets/ via Vite's import.meta.glob, so
-// there are NO per-file import lines to maintain. To swap artwork you just:
-//   1. drop a file into src/assets/  (any name, png/jpg/webp/svg/gif), and
-//   2. point a slide (or the ASSETS map below) at that filename.
+// Images are auto-discovered from src/assets/ (recursively) via Vite's
+// import.meta.glob, so there are NO per-file import lines to maintain. Each
+// project keeps its images in its own subfolder, e.g. src/assets/stu/cover.png,
+// src/assets/offlink/logo.png — so two decks can both have a "cover.png"
+// without colliding. Reference an image by its path RELATIVE to src/assets/:
+//   asset('stu/cover.png')      asset('offlink/logo.png')
 //
 // A missing file does NOT break the build — asset() returns a labelled
 // placeholder and logs a warning, so a fresh clone with no images still runs.
 // That's also what lets you gitignore your own private photos safely.
 // ============================================================================
 
-// Eagerly resolve every image in src/assets/ to its final (hashed) URL.
-const files = import.meta.glob('../assets/*.{png,jpg,jpeg,webp,svg,gif,avif}', {
+// Eagerly resolve every image under src/assets/ (any depth) to its final URL.
+const files = import.meta.glob('../assets/**/*.{png,jpg,jpeg,webp,svg,gif,avif}', {
   eager: true,
   import: 'default',
 });
 
-// Map bare filename -> URL, e.g. { 'logo.png': '/assets/logo-abc123.png', … }
+// Map project-relative path -> URL, e.g. { 'stu/logo.png': '/assets/stu/logo-abc123.png', … }
 const byName = {};
 for (const path in files) {
-  byName[path.split('/').pop()] = files[path];
+  byName[path.replace('../assets/', '')] = files[path];
 }
 
 // A visible stand-in for a missing asset (dark card + the expected filename).
@@ -42,18 +44,9 @@ export function asset(name) {
   return placeholder(name);
 }
 
-// Every filename currently present in src/assets/ (handy for tooling/UI).
+// Every path currently present under src/assets/ (handy for tooling/UI).
 export const ASSET_NAMES = Object.keys(byName);
 
-// ----------------------------------------------------------------------------
-// Role map: which file plays which part in the deck. This is the ONE place to
-// change to re-skin the whole deck — swap the filenames, drop matching files in
-// src/assets/, done. Slides reference these roles (e.g. ASSETS.cover).
-// ----------------------------------------------------------------------------
-export const ASSETS = {
-  logo:       asset('logo.png'),
-  logoShadow: asset('logo-shadow.png'), // logo with a baked-in silhouette shadow (survives PNG export)
-  cover:      asset('cover.png'),
-  screenshot: asset('demo.png'), // slide 2 currently reuses the demo shot
-  demo:       asset('demo.png'),
-};
+// NOTE: the per-deck role map (logo/cover/demo…) now lives inside each project
+// file under src/data/projects/, e.g. projects/stu.js, which calls
+// asset('stu/cover.png'). This module just resolves paths — it is deck-agnostic.

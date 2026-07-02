@@ -1,4 +1,4 @@
-import { ASSETS } from '../data/assets.js';
+import { ASSETS } from '../data/active.js';
 import { photoId } from './helpers.js';
 
 // Full-bleed hero photo, gradient overlay, decorative wave, and a bottom band

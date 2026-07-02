@@ -33,8 +33,12 @@ src/
   main.js               Entry: loads styles, wires resize, renders the deck
   styles.css            All styling (CSS vars + per-type slide layouts)
   data/
-    assets.js           Imports every image once → ASSETS map
-    slides.js           SLIDES: the single source of truth for the deck
+    assets.js           Resolves image paths (recursive, deck-agnostic)
+    active.js           The open project → re-exports its SLIDES + ASSETS
+    projects/           One file per project (deck) — auto-discovered
+      index.js          Registry: finds every project + the default
+      stu.js            Deck: Stu — Personal Food Concierge
+      offlink.js        Deck: Offlink — Offline P2P Payments
   templates/
     index.js            TEMPLATES registry (type → layout)
     helpers.js          Shared render helpers (blobs, ids, attr…)
@@ -47,9 +51,31 @@ src/
     render.js           Builds slots from SLIDES, wires interactions
     export.js           html2canvas → 1080×1080 PNG (per-slide + all)
     scale.js            Scales previews to fit their column
-  assets/               Your images — auto-discovered, gitignored (see below)
+  assets/               Your images, one subfolder per project (stu/, offlink/)
+    stu/                Auto-discovered, gitignored (see below)
+    offlink/
 submissions/            Raw form downloads (drop-zone) — gitignored, see its README
 ```
+
+## Multiple projects (open / close decks)
+
+The studio holds **one deck per project** and you switch between them from the
+**Project** dropdown in the top bar. Each project is a file in
+`src/data/projects/` (e.g. `stu.js`, `offlink.js`) that exports its own
+`SLIDES` + `ASSETS`. Switching remembers your choice (localStorage) and the
+title, logo, slide count and export filenames all follow the active deck.
+
+**Add a new project:**
+
+1. Copy `src/data/projects/stu.js` to `src/data/projects/<id>.js` and change
+   `meta.id` (unique) + `meta.name`.
+2. Drop that project's images in `src/assets/<id>/` and point its `ASSETS` map
+   at them (e.g. `asset('<id>/cover.png')`).
+3. Fill in its `SLIDES`. It **auto-registers** — no import lines to edit — and
+   appears in the dropdown on reload.
+
+Text edits made in the browser are saved back to **whichever project is open**
+(dev server only — see below).
 
 ## Working from a form submission
 
@@ -57,13 +83,13 @@ Downloaded a folder from the **FYP Submission Form**? Drop it straight into
 [`submissions/`](./submissions/) — that's the drop-zone for raw form data (one
 folder per project, plus the responses CSV). It's **gitignored** because it holds
 PII, so nothing there is published. See [`submissions/README.md`](./submissions/README.md)
-for how to turn a submission into a deck (copy its images into `src/assets/`,
-then fill in `src/data/slides.js`).
+for how to turn a submission into a deck (copy its images into `src/assets/<id>/`,
+then fill in that project's `src/data/projects/<id>.js`).
 
 ## Editing the deck
 
-Everything flows from **`src/data/slides.js`** — there's no hardcoded slide
-count anywhere.
+Everything flows from the **active project file** in `src/data/projects/`
+(e.g. `stu.js`) — there's no hardcoded slide count anywhere.
 
 - **Edit text** — change the strings in a slide object. They may contain
   `<b>…</b>` and `<span class="mark">…</span>` (the lime highlight).
@@ -84,15 +110,18 @@ count anywhere.
 
 ### Images / swapping assets
 
-The loader is **asset-agnostic**: every file in `src/assets/` is auto-discovered
-(no import lines to maintain), and a missing image falls back to a labelled
+The loader is **asset-agnostic**: every file under `src/assets/` is
+auto-discovered recursively (no import lines to maintain), keyed by its path
+relative to `src/assets/`. Each project keeps its images in its own subfolder
+(`src/assets/stu/`, `src/assets/offlink/`) so two decks can both have a
+`cover.png` without colliding. A missing image falls back to a labelled
 placeholder instead of breaking the build.
 
-- **Replace artwork** — drop a file with the same name into `src/assets/`.
-- **Use different filenames** — edit the role map in `src/data/assets.js`
-  (e.g. `cover: asset('my-hero.jpg')`).
+- **Replace artwork** — drop a file with the same name into `src/assets/<id>/`.
+- **Use different filenames** — edit the role map (`ASSETS`) in that project's
+  `src/data/projects/<id>.js` (e.g. `cover: asset('stu/my-hero.jpg')`).
 - **Add a brand-new image** — drop it in and reference it from a slide via
-  `photo: asset('yourfile.png')`.
+  `photo: asset('<id>/yourfile.png')`.
 
 > The images themselves are **gitignored** so private photos aren't published;
 > the folder + `src/assets/README.md` stay tracked. A fresh clone builds and

@@ -1,4 +1,4 @@
-import { ASSETS } from '../data/assets.js';
+import { ASSETS } from '../data/active.js';
 import { blobs } from './helpers.js';
 
 // A question followed by a 2-column grid of audience cards (one per `items` entry).

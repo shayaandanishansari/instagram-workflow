@@ -1,5 +1,5 @@
 import html2canvas from 'html2canvas';
-import { SLIDES } from '../data/slides.js';
+import { SLIDES } from '../data/active.js';
 import { pad } from '../templates/helpers.js';
 
 // Oversampling factor for exports. The slide is a true 1080x1080; rendering (and

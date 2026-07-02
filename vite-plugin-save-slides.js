@@ -1,9 +1,11 @@
 // ============================================================================
-// Vite dev plugin: persist in-browser text edits back into src/data/slides.js.
+// Vite dev plugin: persist in-browser text edits back into the ACTIVE project
+// file under src/data/projects/ (e.g. stu.js, offlink.js).
 // ----------------------------------------------------------------------------
 // The studio marks slide text `contenteditable`. This plugin adds a dev-only
-// endpoint (POST /__save-slide) that the browser hits on blur; it surgically
-// replaces ONLY the target string literal in slides.js, leaving every comment,
+// endpoint (POST /__save-slide) that the browser hits on blur; the request
+// names which project file to write (`file`), and the plugin surgically
+// replaces ONLY the target string literal in that file, leaving every comment,
 // asset reference (e.g. ASSETS.cover) and bit of formatting untouched.
 //
 // It is a tiny, dependency-free scanner (no acorn/babel needed). It understands
@@ -173,23 +175,38 @@ export function applyEdit(src, { idx, field, index, value }) {
 
 // --- the Vite plugin --------------------------------------------------------
 export function saveSlidesPlugin() {
-  let slidesPath;
-  let suppressReload = false;
+  let projectsDir;
+  let lastWritten = null; // absolute path of the file we last wrote (to swallow its HMR)
   return {
     name: 'save-slides',
     apply: 'serve', // dev only — the built static site has no backend to write to
     configResolved(cfg) {
-      slidesPath = path.resolve(cfg.root, 'src/data/slides.js');
+      projectsDir = path.resolve(cfg.root, 'src/data/projects');
     },
+    // Resolve a request's target project file safely inside projectsDir. The
+    // filename comes from the browser, so reject anything that isn't a bare
+    // "<name>.js" living directly in the projects folder (no path traversal).
+    // Defaults to stu.js if a client omits `file` (older payloads).
     handleHotUpdate(ctx) {
       // Swallow the HMR event for our own write so typing isn't interrupted by a
       // full reload (the DOM already shows the edit). Manual code edits still HMR.
-      if (suppressReload && ctx.file === slidesPath) {
-        suppressReload = false;
+      if (lastWritten && ctx.file === lastWritten) {
+        lastWritten = null;
         return [];
       }
     },
     configureServer(server) {
+      const resolveTarget = (file) => {
+        const name = path.basename(String(file || 'stu.js')); // strips any dir parts
+        if (name !== file || !/^[\w.-]+\.js$/.test(name) || name === 'index.js') {
+          throw new Error(`invalid project file: ${file}`);
+        }
+        const abs = path.resolve(projectsDir, name);
+        if (path.dirname(abs) !== projectsDir) throw new Error('path escapes projects/');
+        if (!fs.existsSync(abs)) throw new Error(`project file not found: ${name}`);
+        return abs;
+      };
+
       server.middlewares.use('/__save-slide', (req, res) => {
         if (req.method !== 'POST') { res.statusCode = 405; return res.end(); }
         const chunks = [];
@@ -197,11 +214,12 @@ export function saveSlidesPlugin() {
         req.on('end', () => {
           try {
             const edit = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-            const src = fs.readFileSync(slidesPath, 'utf8');
+            const target = resolveTarget(edit.file);
+            const src = fs.readFileSync(target, 'utf8');
             const out = applyEdit(src, edit);
             if (out !== src) {
-              suppressReload = true;
-              fs.writeFileSync(slidesPath, out);
+              lastWritten = target;
+              fs.writeFileSync(target, out);
             }
             res.setHeader('content-type', 'application/json');
             res.end(JSON.stringify({ ok: true }));

@@ -1,4 +1,4 @@
-import { ASSETS } from '../data/assets.js';
+import { ASSETS } from '../data/active.js';
 
 // Centered closing card: big logo, headline, subhead, credit line, and CTA pill.
 export const closing = {
@@ -9,6 +9,7 @@ export const closing = {
       <img class="logo-big" src="${s.logo || ASSETS.logo}" alt="logo">
       <div class="close-head" contenteditable="true" data-field="head">${s.head}</div>
       <div class="close-sub" contenteditable="true" data-field="sub">${s.sub}</div>
+      ${s.teamPhoto ? `<div class="team-photo" style="background-image:url('${s.teamPhoto}')"></div>` : ''}
       <div class="credit" contenteditable="true" data-field="credit">${s.credit}</div>
       <div class="cta" contenteditable="true" data-field="cta">${s.cta}</div>
     </div>`,

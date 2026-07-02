@@ -1,4 +1,4 @@
-import { ASSETS } from '../data/assets.js';
+import { ASSETS } from '../data/active.js';
 import { blobs, photoId, attr } from './helpers.js';
 
 // Eyebrow + highlighted question + supporting quote answer. Optionally shows a

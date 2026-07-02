@@ -36,6 +36,22 @@ body{
 .brand-text h1{font-size:15px; margin:0; font-weight:700; letter-spacing:.2px;}
 .brand-text p{font-size:12px; margin:0; color:var(--muted); font-family:'DM Mono',monospace;}
 .topbar-actions{display:flex; gap:10px; align-items:center;}
+.project-picker{display:flex; align-items:center; gap:8px; margin-right:4px;}
+.project-picker span{
+  font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--muted); font-family:'DM Mono',monospace;
+}
+.project-picker select{
+  appearance:none; cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:13px; color:var(--ink);
+  background:var(--card); border:1.5px solid var(--line); border-radius:999px;
+  padding:9px 34px 9px 15px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%2310241a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 13px center;
+  transition:border-color .12s ease;
+}
+.project-picker select:hover{border-color:var(--ink);}
+.project-picker select:focus{outline:none; border-color:var(--lime-2);}
 .btn{
   appearance:none; border:none; cursor:pointer;
   font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:13px;
@@ -206,6 +222,12 @@ input[type=file]{display:none;}
 .s-closing .close-sub{font-weight:600; font-size:30px; color:var(--lime); margin-top:6px;}
 .s-closing .credit{margin-top:46px; font-size:16px; color:var(--cream); opacity:.8; max-width:560px; line-height:1.5;}
 .s-closing .cta{margin-top:36px; background:var(--lime); color:var(--deep); font-weight:700; font-size:19px; padding:16px 30px; border-radius:999px; display:inline-block;}
+/* Optional founders/team photo on the closing card (any deck that sets `teamPhoto`). */
+.s-closing .team-photo{
+  width:620px; height:300px; margin:30px 0 4px; border-radius:22px;
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  border:6px solid rgba(255,255,255,.92); box-shadow:0 30px 62px -22px rgba(0,0,0,.65);
+}
 
 footer.host-footer{text-align:center; padding:10px 0 50px; color:var(--muted); font-size:12px;}
 
@@ -218,3 +240,69 @@ footer.host-footer{text-align:center; padding:10px 0 50px; color:var(--muted); f
 #save-toast.show{opacity:1; transform:translateY(0);}
 #save-toast.error{background:#7a1d1d;}
 #save-toast.error::before{content:"✕ "; color:#ffb4b4;}
+
+/* ============================================================================
+   THEME: offlink  —  navy + gold, drawn from the Offlink logo
+   ----------------------------------------------------------------------------
+   The logo is two interlocking links (gold + navy) over a faint network mesh.
+   This skin re-maps the deck's shared palette to that brand and adds the mesh
+   as the signature background motif. Applied via `theme: 'offlink'` in
+   src/data/projects/offlink.js → `.theme-offlink` lives on each .slide (so the
+   PNG export keeps it) and on <body> (so the host chrome matches).
+
+   Most of the recolor is free: components read CSS vars, so remapping the vars
+   swaps green→navy/gold everywhere at once. Below the vars are the few pieces
+   that hard-code a colour (the cover wave, the mesh, small polish).
+   ========================================================================== */
+.theme-offlink{
+  --ink:#0b2447;            /* host chrome text */
+  --deep:#0a2143;          /* deep navy — base of every dark slide */
+  --deep-2:#123a70;        /* lifted navy — gradient/highlight of the base */
+  --mid:#1e5aa8;           /* link blue — used inside the decorative blob */
+  --lime:#f4a93c;          /* GOLD — the accent (highlights, eyebrow, CTA, nodes) */
+  --lime-2:#e07c10;        /* deep gold — gradient partner */
+  --cream:#f3ecdd;
+  --muted:#5b6b82;
+  --green-shape:#0a2143;
+}
+/* host chrome: keep the studio light but tint it toward the brand */
+body.theme-offlink{--paper:#eef2f8; --paper-2:#e2e9f4; --line:#cdd8e8;}
+
+/* the faint connectivity mesh reused by every dark slide */
+.theme-offlink.organic-bg{
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'1080'%20viewBox%3D'0%200%201080%201080'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba%28255%2C255%2C255%2C0.055%29'%20stroke-width%3D'2'%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'300'%20y2%3D'70'%2F%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'160'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'70'%20x2%3D'520'%20y2%3D'150'%2F%3E%3Cline%20x1%3D'520'%20y1%3D'150'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'950'%20y2%3D'170'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'880'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'1010'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'880'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'880'%20y1%3D'300'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'990'%20y1%3D'560'%20x2%3D'860'%20y2%3D'700'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'990'%20y2%3D'560'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'780'%20x2%3D'860'%20y2%3D'700'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'780'%20x2%3D'1010'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'860'%20y1%3D'700'%20x2%3D'700'%20y2%3D'560'%2F%3E%3Cline%20x1%3D'700'%20y1%3D'560'%20x2%3D'560'%20y2%3D'760'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'760'%20x2%3D'430'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'560'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'250'%20y2%3D'820'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'620'%20x2%3D'40'%20y2%3D'420'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'120'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'60'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'60'%20y1%3D'900'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'760'%20x2%3D'560'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'820'%20y1%3D'980'%20x2%3D'1010'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'1010'%20x2%3D'820'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'160'%20y1%3D'360'%20x2%3D'40'%20y2%3D'420'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba%28244%2C169%2C60%2C0.16%29'%3E%3Ccircle%20cx%3D'90'%20cy%3D'120'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'70'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'520'%20cy%3D'150'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'760'%20cy%3D'90'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'950'%20cy%3D'170'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'360'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'880'%20cy%3D'300'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'700'%20cy%3D'250'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'560'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'780'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'860'%20cy%3D'700'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'700'%20cy%3D'560'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'560'%20cy%3D'760'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'430'%20cy%3D'900'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'820'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'120'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'60'%20cy%3D'900'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'1010'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'560'%20cy%3D'1010'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'820'%20cy%3D'980'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'980'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'160'%20cy%3D'360'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'40'%20cy%3D'420'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / cover no-repeat,
+    radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);
+}
+/* gold node accent is enough; calm the coloured blobs so the mesh reads */
+.theme-offlink .organic-bg .blob-a{opacity:.6;}
+.theme-offlink .organic-bg .blob-b{opacity:.75;}
+
+/* screenshot: the phones crop carries its own navy, so match the frame's
+   letterbox to it (≈#011239) — otherwise the contain-bands seam against it */
+.theme-offlink .s-screenshot .shot-frame{background-color:#011239;}
+
+/* cover: navy tint + navy wave (was green) + two-tone "Off·link" wordmark */
+.theme-offlink .s-cover .photo-overlay{
+  background:linear-gradient(180deg, rgba(8,24,48,0.14) 0%, rgba(8,24,48,0.04) 42%, rgba(8,24,48,0.58) 100%);
+}
+/* our logo is a solid app icon (no baked shadow-padding), so drop the negative
+   margins the shared rule uses to trim a shadow — they'd overlap the tagline */
+.theme-offlink .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
+.theme-offlink .s-cover .wave{
+  background:bottom / 100% 100% no-repeat
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%230A2143'%2F%3E%3C%2Fsvg%3E");
+}
+.theme-offlink .s-cover .wordmark .lk{color:var(--lime);}
+
+/* closing: mesh behind, tighter stack to make room for the founders photo */
+.theme-offlink.s-closing{
+  background:
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'1080'%20viewBox%3D'0%200%201080%201080'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba%28255%2C255%2C255%2C0.05%29'%20stroke-width%3D'2'%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'300'%20y2%3D'70'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'70'%20x2%3D'520'%20y2%3D'150'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'950'%20y2%3D'170'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'1010'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'160'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'160'%20y1%3D'360'%20x2%3D'120'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'990'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'620'%20x2%3D'250'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'990'%20y1%3D'620'%20x2%3D'860'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'900'%20x2%3D'540'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'860'%20y1%3D'900'%20x2%3D'540'%20y2%3D'1010'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba%28244%2C169%2C60%2C0.14%29'%3E%3Ccircle%20cx%3D'90'%20cy%3D'120'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'70'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'520'%20cy%3D'150'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'760'%20cy%3D'90'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'950'%20cy%3D'170'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'360'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'160'%20cy%3D'360'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'120'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'900'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'860'%20cy%3D'900'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'540'%20cy%3D'1010'%20r%3D'6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / cover no-repeat,
+    radial-gradient(140% 140% at 50% 0%, var(--deep-2) 0%, var(--deep) 65%);
+}
+.theme-offlink.s-closing .logo-big{width:92px; height:92px; margin-bottom:18px;}
+.theme-offlink.s-closing .close-head{font-size:58px;}
+.theme-offlink.s-closing .close-sub{margin-top:4px;}
+.theme-offlink.s-closing .credit{margin-top:24px;}
+.theme-offlink.s-closing .cta{margin-top:26px;}
