@@ -157,6 +157,30 @@ input[type=file]{display:none;}
 .s-cover .cover-right .logo-chip{position:static; width:214px; height:214px; margin:-22px -32px -46px 0; filter:none;}
 .s-cover .tagline{font-weight:500; font-size:23px; line-height:1.45; color:#eafff0; text-align:right; padding-bottom:4px;}
 
+/* optional "recognised by" badge — a tab flush into the top-left corner,
+   sharing an edge with both the top and left boundary (only the inner
+   bottom-right corner is rounded) so it reads as hugging the slide, not
+   floating. Uses --deep-2, the same dark green as the wave/band at the
+   bottom of this slide, so it matches the slide's own palette per theme. */
+.s-cover .recognition-badge{
+  position:absolute; left:0; top:0; z-index:6;
+  background:var(--deep-2); border-radius:0 0 22px 0;
+  padding:18px 19px 19px 21px;
+  box-shadow:0 20px 40px -18px rgba(0,0,0,.55);
+}
+.s-cover .recognition-label{
+  font-family:'DM Mono', monospace; font-size:15px; font-weight:600;
+  letter-spacing:1px; text-transform:uppercase; color:var(--cream);
+  margin-bottom:11px;
+}
+.s-cover .recognition-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.s-cover .recognition-chip{
+  width:94px; height:56px; background:#fff; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  padding:8px; box-shadow:0 8px 16px -8px rgba(0,0,0,.35);
+}
+.s-cover .recognition-chip img{max-width:100%; max-height:100%; object-fit:contain;}
+
 /* ============== SHARED ORGANIC BG (screenshot / qa / audience) ============== */
 .organic-bg{background:radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);}
 .organic-bg .blob-a{width:760px; height:760px; background:linear-gradient(135deg, var(--mid), var(--lime-2)); top:-280px; right:-260px; opacity:.9;}
@@ -198,6 +222,10 @@ input[type=file]{display:none;}
 .qa-bullets li:last-child{margin-bottom:0;}
 .qa-bullets li::before{content:""; position:absolute; left:0; top:11px; width:14px; height:14px; border-radius:4px; background:var(--lime);}
 
+/* optional "as featured in" logo strip under the bullets/answer */
+.qa-logos{display:flex; align-items:center; gap:16px; margin-top:36px; max-width:760px; flex-wrap:wrap;}
+.qa-logo-chip{height:56px; max-width:160px; object-fit:contain; background:#fff; border-radius:12px; padding:10px 16px; box-shadow:0 14px 28px -14px rgba(0,0,0,.55);}
+
 /* ============== TYPE: audience ============== */
 .s-audience .aud-grid{position:relative; z-index:5; margin:48px 76px 0; display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:920px;}
 .s-audience .aud-card{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:22px; padding:30px 28px;}
@@ -205,6 +233,9 @@ input[type=file]{display:none;}
 .s-audience .aud-card .label{color:#fff; font-size:27px; font-weight:700; letter-spacing:-.3px;}
 .s-audience .aud-caption{position:relative; z-index:5; margin:40px 76px 0; max-width:920px; color:#f7f5ec; font-size:26px; font-weight:600; line-height:1.5; letter-spacing:-.3px;}
 .s-audience .aud-caption .mark{background:var(--lime); color:var(--deep); padding:2px 10px; border-radius:7px;}
+
+/* decorative "grove" filler row — see treeGrove() in templates/helpers.js */
+.tree-grove{position:relative; z-index:5; margin:44px 76px 0; display:flex; align-items:flex-end; gap:34px; color:var(--lime);}
 
 /* ============== TYPE: qa — optional demo photo card ============== */
 .s-qa .demo-card{
@@ -225,7 +256,7 @@ input[type=file]{display:none;}
 /* Optional founders/team photo on the closing card (any deck that sets `teamPhoto`). */
 .s-closing .team-photo{
   width:620px; height:300px; margin:30px 0 4px; border-radius:22px;
-  background-size:cover; background-position:center; background-repeat:no-repeat;
+  background-size:cover; background-position:center 0%; background-repeat:no-repeat;
   border:6px solid rgba(255,255,255,.92); box-shadow:0 30px 62px -22px rgba(0,0,0,.65);
 }
 
@@ -306,3 +337,68 @@ body.theme-offlink{--paper:#eef2f8; --paper-2:#e2e9f4; --line:#cdd8e8;}
 .theme-offlink.s-closing .close-sub{margin-top:4px;}
 .theme-offlink.s-closing .credit{margin-top:24px;}
 .theme-offlink.s-closing .cta{margin-top:26px;}
+
+/* ============================================================================
+   THEME: interview  —  navy + teal, drawn from the FYP poster
+   ----------------------------------------------------------------------------
+   The poster (submissions/AI Powered Virtual Interview System/) uses a navy
+   #1b3a59/#2c547c palette on white. This skin carries that navy into the deck
+   and pairs it with teal (matching the designed eye/lens logo mark — no brand
+   logo was submitted, see src/assets/interview/logo.svg) instead of reusing
+   offlink's gold, so the two navy decks don't read as the same brand.
+   Applied via `theme: 'interview'` in src/data/projects/interview.js.
+   ========================================================================== */
+.theme-interview{
+  --ink:#0d1f33;
+  --deep:#071628;
+  --deep-2:#12314f;
+  --mid:#2c547c;
+  --lime:#2dd4bf;         /* teal — highlights, eyebrow, CTA, the "AI" in the wordmark */
+  --lime-2:#14b8a6;
+  --cream:#eaf6f5;
+  --muted:#5b7086;
+  --green-shape:#12314f;
+}
+body.theme-interview{--paper:#eef3f6; --paper-2:#e3eaf0; --line:#cdd9e2;}
+
+/* our logo is a flat app-icon (no baked shadow-padding), same fix as offlink */
+.theme-interview .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
+.theme-interview .s-cover .photo-overlay{
+  background:linear-gradient(180deg, rgba(7,22,40,0.16) 0%, rgba(7,22,40,0.05) 42%, rgba(7,22,40,0.62) 100%);
+}
+.theme-interview .s-cover .wave{
+  background:bottom / 100% 100% no-repeat
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%2312314F'%2F%3E%3C%2Fsvg%3E");
+}
+.theme-interview .s-cover .wordmark .ai{color:var(--lime);}
+
+/* ============================================================================
+   THEME: sairaab  —  deep teal + gold
+   ----------------------------------------------------------------------------
+   Deliberately not a repaint of the studio's default green — Stu already owns
+   that. Teal reads as "cooling the city" (Sairaab's own pitch: reducing urban
+   heat), gold nods to the Stanford/NIC/Google-Cloud recognition the team has
+   picked up. The brand's green survives only in the logo chip itself.
+   ========================================================================== */
+.theme-sairaab{
+  --ink:#0a2422;
+  --deep:#07211f;          /* deep teal — base of every dark slide */
+  --deep-2:#0f3b36;        /* lifted teal */
+  --mid:#1f6b5c;           /* muted sea-green, used inside the decorative blob */
+  --lime:#f2b134;          /* GOLD — the accent (highlights, eyebrow, CTA) */
+  --lime-2:#d99420;        /* deeper gold partner */
+  --cream:#f8f1de;
+  --muted:#5f7772;
+  --green-shape:#0f3b36;
+}
+body.theme-sairaab{--paper:#eef4f2; --paper-2:#e2ece8; --line:#cddbd6;}
+
+/* our logo is a flat app-icon (no baked shadow-padding), same fix as offlink */
+.theme-sairaab .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
+.theme-sairaab .s-cover .photo-overlay{
+  background:linear-gradient(180deg, rgba(7,33,31,0.16) 0%, rgba(7,33,31,0.05) 42%, rgba(7,33,31,0.60) 100%);
+}
+.theme-sairaab .s-cover .wave{
+  background:bottom / 100% 100% no-repeat
+    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%230F3B36'%2F%3E%3C%2Fsvg%3E");
+}

@@ -3,6 +3,9 @@ dist/
 .DS_Store
 *.local
 
+# API keys (see .env.example)
+.env
+
 # Editor / IDE
 .idea/
 .vscode/

@@ -2,7 +2,9 @@ import { ASSETS } from '../data/active.js';
 import { blobs, photoId, attr } from './helpers.js';
 
 // Eyebrow + highlighted question + supporting quote answer. Optionally shows a
-// small rotated demo photo card in the top-right (when the slide has `photo`).
+// small rotated demo photo card in the top-right (when the slide has `photo`),
+// and/or a strip of third-party logo badges under the bullets (when the slide
+// has `logos`: [{ src, alt }] — e.g. "as featured in" recognition badges).
 export const qa = {
   cls: 'slide organic-bg s-qa',
   render: (s, idx) =>
@@ -19,6 +21,11 @@ export const qa = {
         ? `<ul class="qa-bullets">${s.bullets
             .map((b, i) => `<li contenteditable="true" data-field="bullets" data-index="${i}">${b}</li>`)
             .join('')}</ul>`
+        : ''}
+      ${s.logos
+        ? `<div class="qa-logos">${s.logos
+            .map((l) => `<img class="qa-logo-chip" src="${l.src}" alt="${l.alt || ''}">`)
+            .join('')}</div>`
         : ''}
     </div>`,
 };
