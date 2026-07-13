@@ -15,8 +15,9 @@ locally. The practical attack surface is therefore very small.
 
 ## The one thing to be careful about
 
-Slides are rendered from `src/data/slides.js` using `innerHTML`. That content is
-**author-controlled** — you write it — so it is not an injection risk as shipped.
+Slides are rendered from the deck files in `src/data/projects/` using `innerHTML`
+(each kit's layouts return HTML strings). That content is **author-controlled** —
+you write it — so it is not an injection risk as shipped.
 
 If you extend this tool to render slide content that comes from an **untrusted
 source** (URL parameters, uploaded/imported JSON, a public "paste your deck"

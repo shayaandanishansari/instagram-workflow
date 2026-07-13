@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas';
 import { SLIDES } from '../data/active.js';
-import { pad } from '../templates/helpers.js';
+import { pad } from './helpers.js';
 
 // Oversampling factor for exports. The slide is a true 1080x1080; rendering (and
 // writing out) at 2x yields a crisp 2160x2160 PNG. Bump to 3 for even sharper.
@@ -62,7 +62,9 @@ export async function exportSlide(idx) {
   document.body.appendChild(wrapper);
 
   try {
-    const rendered = await html2canvas(clone, { scale: EXPORT_SCALE, useCORS: true, backgroundColor: '#0e2a1c' });
+    // No backdrop colour: every kit paints its own opaque slide background, so
+    // hardcoding one here would just be one kit's palette leaking into the engine.
+    const rendered = await html2canvas(clone, { scale: EXPORT_SCALE, useCORS: true, backgroundColor: null });
     document.body.removeChild(wrapper);
 
     // Normalize to an exact square at the oversampled resolution (source is already square).

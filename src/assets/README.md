@@ -22,11 +22,16 @@ Inside a project's subfolder (`src/assets/<id>/`), these filenames are
 referenced by the role map (`ASSETS`) in `src/data/projects/<id>.js`. Provide
 them (or change the names in that map to match your files):
 
-| Filename    | Role                          | Used by                    | Suggested size |
-|-------------|-------------------------------|----------------------------|----------------|
+| Filename    | Role                          | Used by (in the `fyp` kit)   | Suggested size |
+|-------------|-------------------------------|------------------------------|----------------|
 | `logo.png`  | Brand logo / wordmark chip    | cover, qa, audience, closing | ~512×512, transparent |
-| `cover.png` | Full-bleed hero photo         | cover slide                | ≥1080×1080 |
-| `demo.png`  | App screenshot / demo shot    | screenshot + journey slides | ≥1080×1080 (screenshot), ≥600×376 (card) |
+| `cover.png` | Full-bleed hero photo         | cover slide                  | ≥1080×1080 |
+| `demo.png`  | App screenshot / demo shot    | screenshot + journey slides  | ≥1080×1080 (screenshot), ≥600×376 (card) |
+
+> These roles are a **convention of the `fyp` kit**, not a rule of the loader.
+> `assets.js` just resolves paths — the role map is whatever a deck's `ASSETS`
+> export says it is, and a different kit (`src/kits/<id>/`) is free to expect a
+> completely different set of images.
 
 ## Swapping assets
 

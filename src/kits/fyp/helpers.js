@@ -1,18 +1,10 @@
-// Small shared helpers used across the layout templates.
+// Decorative helpers for the FYP kit ONLY — these draw this kit's look, so they
+// live with it rather than in src/lib/helpers.js (which is engine, shared by all
+// kits). A new kit brings its own motifs; it does not inherit these.
 
-export const pad = (n) => (n < 10 ? '0' : '') + n;
-
-// Every photo target and its file input share the slide index, so the
-// "Replace photo" wiring and the export routine can find them generically.
-export const photoId = (idx) => 'photo-' + idx;
-export const inputId = (idx) => 'photo-input-' + idx;
-
-// The three decorative background circles used by organic-bg slides.
+// The three decorative background circles used by this kit's organic-bg slides.
 export const blobs = () =>
   '<div class="blob blob-a"></div><div class="blob blob-b"></div><div class="blob blob-c"></div>';
-
-// Emit an attribute only when a value is present (keeps templates tidy).
-export const attr = (name, v) => (v ? ` ${name}="${v}"` : '');
 
 // A simple layered-pine silhouette, sized/tinted by the caller. Used as a
 // decorative filler (e.g. a "grove" row) on slides with empty space —

@@ -27,35 +27,51 @@ npm run preview    # serve the built dist/ locally
 
 ## Project layout
 
+The codebase is **three layers, kept strictly apart**: an *engine* that can render
+anything, *kits* that each define a design, and *decks* that hold one project's
+content. Adding a project touches only a deck; adding a new look touches only a
+kit.
+
 ```
 index.html              Page shell (topbar, intro, empty #grid, footer)
 src/
   main.js               Entry: loads styles, wires resize, renders the deck
-  styles.css            All styling (CSS vars + per-type slide layouts)
-  data/
+  styles.css            Studio CHROME + the 1080×1080 canvas contract (no deck design)
+  lib/                  THE ENGINE — renders any deck in any kit
+    render.js           Builds slots from SLIDES, wires interactions
+    export.js           html2canvas → 1080×1080 PNG (per-slide + all)
+    scale.js            Scales previews to fit their column
+    helpers.js          The engine/kit contract (photoId, inputId, pad, attr)
+  kits/                 THE DESIGNS — one folder per kit, auto-discovered
+    index.js            Registry: finds every kit + the default
+    fyp/                Kit: the FYP Showcase look
+      index.js          meta + LAYOUTS (cover|screenshot|qa|audience|closing)
+      fyp.css           All of its styling, scoped .kit-fyp — plus its themes
+      layouts/          One file per slide type
+      helpers.js        Decoration for this kit only (blobs, tree grove)
+  data/                 THE CONTENT
     assets.js           Resolves image paths (recursive, deck-agnostic)
     active.js           The open project → re-exports its SLIDES + ASSETS
     projects/           One file per project (deck) — auto-discovered
       index.js          Registry: finds every project + the default
       stu.js            Deck: Stu — Personal Food Concierge
       offlink.js        Deck: Offlink — Offline P2P Payments
-  templates/
-    index.js            TEMPLATES registry (type → layout)
-    helpers.js          Shared render helpers (blobs, ids, attr…)
-    cover.js            Layout: full-bleed hero + wordmark band
-    screenshot.js       Layout: single framed screenshot
-    qa.js               Layout: question + quote (+ optional demo photo)
-    audience.js         Layout: question + 2-col audience grid
-    closing.js          Layout: centered logo + headline + CTA
-  lib/
-    render.js           Builds slots from SLIDES, wires interactions
-    export.js           html2canvas → 1080×1080 PNG (per-slide + all)
-    scale.js            Scales previews to fit their column
   assets/               Your images, one subfolder per project (stu/, offlink/)
-    stu/                Auto-discovered, gitignored (see below)
-    offlink/
+                        Auto-discovered, gitignored (see below)
+scripts/                One-off CLI tooling (e.g. pull a submission from Drive)
 submissions/            Raw form downloads (drop-zone) — gitignored, see its README
 ```
+
+**Every folder has its own README** explaining what it is, the contract it
+imposes, and how it ties into the tool — start with [`src/README.md`](./src/README.md).
+
+## Kits vs. themes
+
+A **theme** (`meta.theme`) is a palette variant *within* a design — same layouts,
+different colours. A **kit** (`meta.kit`) is a different design outright: its own
+layouts and its own stylesheet. If a post still reads as "the same post in another
+colour," you wanted a kit and reached for a theme. See
+[`src/kits/README.md`](./src/kits/README.md) for how to add one.
 
 ## Multiple projects (open / close decks)
 
@@ -127,12 +143,18 @@ placeholder instead of breaking the build.
 > the folder + `src/assets/README.md` stay tracked. A fresh clone builds and
 > runs (with placeholders) until you add your own. See `src/assets/README.md`.
 
-### Adding a new layout type
+### Adding a new slide type (to an existing design)
 
-1. Create `src/templates/mytype.js` exporting `{ cls, render(slide, idx) }`.
-2. Register it in `src/templates/index.js`.
-3. Add any layout CSS to `src/styles.css` (scope it under a `.s-mytype` class).
-4. Use `type: 'mytype'` in a slide.
+1. Create `src/kits/<kit>/layouts/mytype.js` exporting `{ cls, render(slide, idx) }`.
+2. Register it in that kit's `index.js`, in its `LAYOUTS` map.
+3. Add its CSS to `src/kits/<kit>/<kit>.css`, **scoped under `.kit-<kit>`**
+   (unscoped rules leak into every other kit — all kit stylesheets are bundled
+   into one sheet).
+4. Use `type: 'mytype'` in a slide of a deck whose `meta.kit` is that kit.
+
+### Adding a new design
+
+That's a **kit**, not a layout — see [`src/kits/README.md`](./src/kits/README.md).
 
 ## Contributing & security
 

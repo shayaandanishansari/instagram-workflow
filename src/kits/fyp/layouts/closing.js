@@ -1,4 +1,4 @@
-import { ASSETS } from '../data/active.js';
+import { ASSETS } from '../../../data/active.js';
 
 // Centered closing card: big logo, headline, subhead, credit line, and CTA pill.
 // Optionally shows one large founders/team photo (`teamPhoto`, a single URL)

@@ -1,17 +1,27 @@
+/* ============================================================================
+   STUDIO CHROME + the slide canvas contract.
+   ----------------------------------------------------------------------------
+   This file styles the APP (topbar, project picker, slot grid, preview frames,
+   toast) — NOT the deck. A slide's look belongs to its kit, in
+   src/kits/<id>/<id>.css, scoped under `.kit-<id>`.
+
+   The only slide rules here are the ones EVERY kit must obey: the 1080x1080
+   box, the editing affordance, and the "Replace photo" button (which render.js
+   injects, so it exists whatever the kit draws). Everything else — background,
+   type, colour — is the kit's.
+
+   The vars below are the CHROME palette only. Deck palettes (--deep, --lime, …)
+   live in each kit's stylesheet, so a new kit can't be tinted by the old one.
+   A kit's theme may still override these (see body.kit-fyp.theme-offlink) to
+   tint the studio toward the brand it's showing.
+   ========================================================================== */
 :root{
   --ink:#10241a;
   --paper:#f1efe9;
   --paper-2:#e7e4db;
   --card:#ffffff;
   --line:#dcd8cc;
-  --deep:#0e2a1c;
-  --deep-2:#163a26;
-  --mid:#1f6b3f;
-  --lime:#4ade60;
-  --lime-2:#33c34c;
-  --cream:#f6f3e6;
   --muted:#6b6457;
-  --green-shape:#3DCB5A;
 }
 *{box-sizing:border-box;}
 html,body{margin:0; padding:0;}
@@ -51,7 +61,7 @@ body{
   transition:border-color .12s ease;
 }
 .project-picker select:hover{border-color:var(--ink);}
-.project-picker select:focus{outline:none; border-color:var(--lime-2);}
+.project-picker select:focus{outline:none; border-color:var(--ink);}
 .btn{
   appearance:none; border:none; cursor:pointer;
   font-family:'Plus Jakarta Sans',sans-serif; font-weight:600; font-size:13px;
@@ -95,375 +105,46 @@ body{
 .slot-foot{display:flex; gap:8px;}
 
 /* The preview frame scales the true 1080px slide down to fit its column.
-   The slide itself always stays a real 1080x1080 internally. */
+   The slide itself always stays a real 1080x1080 internally. The frame's own
+   background is just the letterbox behind an opaque slide — deliberately a
+   neutral dark, not a kit colour. */
 .frame{
   width:100%; aspect-ratio:1/1; position:relative;
   border-radius:18px; overflow:hidden;
   box-shadow:0 1px 2px rgba(16,36,26,.06), 0 14px 30px -16px rgba(16,36,26,.35);
-  border:1px solid var(--line); background:var(--deep);
+  border:1px solid var(--line); background:#12171c;
 }
 .frame .scaler{position:absolute; top:0; left:0; width:1080px; height:1080px; transform-origin:top left;}
 
 input[type=file]{display:none;}
 
-/* ---------------- SLIDE BASE ---------------- */
+/* ---------------- SLIDE CANVAS (the contract every kit obeys) ---------------- */
+/* The box only. What gets painted inside it is the kit's business. */
 .slide{
   width:1080px; height:1080px; position:relative; overflow:hidden;
-  font-family:'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing:antialiased;
-  background:var(--deep);
 }
+/* Editing affordance — the studio's, not the kit's, so every kit gets it free. */
 .slide [contenteditable="true"]{outline:none; cursor:text; border-radius:6px;}
 .slide [contenteditable="true"]:hover{box-shadow:0 0 0 3px rgba(255,255,255,0.25);}
 .slide [contenteditable="true"]:focus{box-shadow:0 0 0 3px rgba(255,255,255,0.55);}
 
-/* photo rendered as background (html2canvas honors background-size:cover, unlike object-fit) */
-.photo-bg{position:absolute; inset:0; background-size:cover; background-position:center; background-repeat:no-repeat;}
-
-.logo-chip{position:absolute; object-fit:contain; z-index:6; filter:drop-shadow(0 8px 18px rgba(0,0,0,.28));}
-
+/* Injected by render.js onto any slide with a `photo`, whatever the kit draws. */
 .photo-swap-btn{
   position:absolute; z-index:9;
-  background:rgba(14,42,28,0.65); color:#fff; border:1px solid rgba(255,255,255,.5);
+  background:rgba(14,20,28,0.65); color:#fff; border:1px solid rgba(255,255,255,.5);
   font-size:13px; padding:9px 16px; border-radius:999px; font-weight:600;
   cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; backdrop-filter:blur(4px);
   top:40px; right:40px;
 }
-.blob{position:absolute; border-radius:50%;}
-
-/* ============== TYPE: cover ============== */
-.s-cover .photo-overlay{
-  position:absolute; inset:0; z-index:2;
-  background:linear-gradient(180deg, rgba(10,28,18,0.10) 0%, rgba(10,28,18,0.04) 45%, rgba(10,28,18,0.50) 100%);
-}
-/* decorative bottom wave — inline SVG (single, tiny) instead of a raster PNG */
-.s-cover .wave{
-  position:absolute; left:0; right:0; bottom:0; height:360px; z-index:3;
-  background:bottom / 100% 100% no-repeat
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1080' height='360' viewBox='0 0 1080 360' preserveAspectRatio='none'%3E%3Cpath d='M0,120 C20,116 80,97 120,95 C160,93 190,101 240,110 C290,119 360,145 420,147 C480,149 550,131 600,121 C650,111 660,99 720,87 C780,75 900,52 960,49 C1020,46 1060,66 1080,70 L1080,360 L0,360 Z' fill='%233DCB5A'/%3E%3C/svg%3E");
-}
-.s-cover .band-text{
-  position:absolute; left:0; right:0; bottom:0; z-index:6;
-  padding:60px 64px 80px;
-  display:flex; align-items:flex-end; justify-content:space-between; gap:30px;
-}
-.s-cover .wordmark{font-weight:800; color:#fff; letter-spacing:-1px; max-width:560px;}
-.s-cover .wordmark .brand{display:block; font-size:84px; line-height:0.95;}
-.s-cover .wordmark .desc{display:block; font-size:46px; font-weight:700; line-height:1.04; margin-top:6px;}
-.s-cover .cover-right{display:flex; flex-direction:column; align-items:flex-end; gap:18px; max-width:340px;}
-/* Uses logo-shadow.png — the drop-shadow is baked into the image so it survives
-   the html2canvas PNG export (CSS filters do not). The box is oversized because
-   the asset carries transparent shadow-padding; negative margins trim that back
-   so the bowl keeps its size (~132px) and position. */
-.s-cover .cover-right .logo-chip{position:static; width:214px; height:214px; margin:-22px -32px -46px 0; filter:none;}
-.s-cover .tagline{font-weight:500; font-size:23px; line-height:1.45; color:#eafff0; text-align:right; padding-bottom:4px;}
-
-/* optional "recognised by" badge — a tab flush into the top-left corner,
-   sharing an edge with both the top and left boundary (only the inner
-   bottom-right corner is rounded) so it reads as hugging the slide, not
-   floating. Uses --deep-2, the same dark green as the wave/band at the
-   bottom of this slide, so it matches the slide's own palette per theme. */
-.s-cover .recognition-badge{
-  position:absolute; left:0; top:0; z-index:6;
-  background:var(--deep-2); border-radius:0 0 22px 0;
-  padding:18px 19px 19px 21px;
-  box-shadow:0 20px 40px -18px rgba(0,0,0,.55);
-}
-.s-cover .recognition-label{
-  font-family:'DM Mono', monospace; font-size:15px; font-weight:600;
-  letter-spacing:1px; text-transform:uppercase; color:var(--cream);
-  margin-bottom:11px;
-}
-.s-cover .recognition-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.s-cover .recognition-chip{
-  width:94px; height:56px; background:#fff; border-radius:11px;
-  display:flex; align-items:center; justify-content:center;
-  padding:8px; box-shadow:0 8px 16px -8px rgba(0,0,0,.35);
-}
-.s-cover .recognition-chip img{max-width:100%; max-height:100%; object-fit:contain;}
-
-/* ============== SHARED ORGANIC BG (screenshot / qa / audience) ============== */
-.organic-bg{background:radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);}
-.organic-bg .blob-a{width:760px; height:760px; background:linear-gradient(135deg, var(--mid), var(--lime-2)); top:-280px; right:-260px; opacity:.9;}
-.organic-bg .blob-b{width:480px; height:480px; background:var(--deep-2); bottom:-200px; left:-160px; opacity:.9;}
-.organic-bg .blob-c{width:300px; height:300px; background:var(--lime); bottom:120px; right:-90px; opacity:.18;}
-
-.content-pad{position:relative; z-index:5; padding:88px 76px 0;}
-.eyebrow{font-family:'DM Mono',monospace; font-size:14px; color:var(--lime); letter-spacing:1.5px; text-transform:uppercase; margin-bottom:22px; font-weight:500;}
-.logo-corner{left:64px; bottom:60px; width:104px; height:104px;}
-
-/* ============== TYPE: screenshot ============== */
-.s-screenshot .shot-frame{
-  /* Frame matches demo.png's 16:10 ratio (960x600) so the whole shot shows
-     un-cropped; contain guarantees nothing is clipped even if art is swapped. */
-  position:absolute; left:60px; top:240px; width:960px; height:600px; z-index:5;
-  border-radius:22px; border:8px solid rgba(255,255,255,.92);
-  box-shadow:0 30px 70px -20px rgba(0,0,0,.6);
-  background-color:#0f2e1e;
-  background-size:contain; background-position:center; background-repeat:no-repeat; overflow:hidden;
-}
-
-/* highlighted, load-bearing question (shared by qa + audience) */
-.hl-question{font-weight:800; line-height:1.42; letter-spacing:-1.5px; color:#fff; font-size:68px; max-width:780px; margin-bottom:34px;}
-.hl-question .mark{
-  background:var(--lime); color:var(--deep); padding:3px 14px; border-radius:9px;
-  box-decoration-break:clone; -webkit-box-decoration-break:clone;
-  /* Keep a highlighted phrase on one line. html2canvas (export) doesn't support
-     box-decoration-break, so a mark that wraps renders as one giant box with the
-     preceding text dropped. Forcing the phrase to wrap as a unit avoids that. */
-  white-space:nowrap;
-}
-/* the answer, kept verbatim, as a supporting quote */
-.qa-answer{font-weight:500; font-size:25px; line-height:1.62; color:#f7f5ec; opacity:1; max-width:700px; position:relative; padding-left:32px; margin-top:40px;}
-.qa-answer b, .qa-answer strong{font-weight:800; color:#fff;}
-.qa-answer::before{content:"\201C"; position:absolute; left:-6px; top:-22px; font-size:64px; color:var(--lime); font-family:Georgia, serif; opacity:.85;}
-/* optional supporting bullets under the answer */
-.qa-bullets{list-style:none; margin:34px 0 0; padding:0; max-width:700px;}
-.qa-bullets li{position:relative; padding-left:34px; color:#f7f5ec; font-size:26px; font-weight:700; letter-spacing:-.3px; margin-bottom:18px;}
-.qa-bullets li:last-child{margin-bottom:0;}
-.qa-bullets li::before{content:""; position:absolute; left:0; top:11px; width:14px; height:14px; border-radius:4px; background:var(--lime);}
-
-/* optional "as featured in" logo strip under the bullets/answer */
-.qa-logos{display:flex; align-items:center; gap:16px; margin-top:36px; max-width:760px; flex-wrap:wrap;}
-.qa-logo-chip{height:56px; max-width:160px; object-fit:contain; background:#fff; border-radius:12px; padding:10px 16px; box-shadow:0 14px 28px -14px rgba(0,0,0,.55);}
-
-/* ============== TYPE: audience ============== */
-.s-audience .aud-grid{position:relative; z-index:5; margin:48px 76px 0; display:grid; grid-template-columns:1fr 1fr; gap:22px; max-width:920px;}
-.s-audience .aud-card{background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.18); border-radius:22px; padding:30px 28px;}
-.s-audience .aud-card .num{font-family:'DM Mono',monospace; color:var(--lime); font-size:14px; margin-bottom:14px; display:block;}
-.s-audience .aud-card .label{color:#fff; font-size:27px; font-weight:700; letter-spacing:-.3px;}
-.s-audience .aud-caption{position:relative; z-index:5; margin:40px 76px 0; max-width:920px; color:#f7f5ec; font-size:26px; font-weight:600; line-height:1.5; letter-spacing:-.3px;}
-.s-audience .aud-caption .mark{background:var(--lime); color:var(--deep); padding:2px 10px; border-radius:7px;}
-
-/* decorative "grove" filler row — see treeGrove() in templates/helpers.js */
-.tree-grove{position:relative; z-index:5; margin:44px 76px 0; display:flex; align-items:flex-end; gap:34px; color:var(--lime);}
-
-/* ============== TYPE: qa — optional demo photo card ============== */
-.s-qa .demo-card{
-  position:absolute; right:64px; top:64px; width:300px; height:188px; z-index:6;
-  border-radius:16px; border:6px solid rgba(255,255,255,.92);
-  box-shadow:0 24px 50px -18px rgba(0,0,0,.6); transform:rotate(3deg);
-  background-size:cover; background-position:center; background-repeat:no-repeat; overflow:hidden;
-}
-
-/* ============== TYPE: closing ============== */
-.s-closing{background:radial-gradient(140% 140% at 50% 0%, var(--deep-2) 0%, var(--deep) 65%);}
-.s-closing .close-wrap{position:relative; z-index:5; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 90px;}
-.s-closing .logo-big{width:120px; height:120px; object-fit:contain; margin-bottom:30px; filter:drop-shadow(0 10px 20px rgba(0,0,0,.3));}
-.s-closing .close-head{font-weight:800; font-size:66px; color:#fff; line-height:1.05; letter-spacing:-1.5px;}
-.s-closing .close-sub{font-weight:600; font-size:30px; color:var(--lime); margin-top:6px;}
-.s-closing .credit{margin-top:46px; font-size:16px; color:var(--cream); opacity:.8; max-width:560px; line-height:1.5;}
-.s-closing .cta{margin-top:36px; background:var(--lime); color:var(--deep); font-weight:700; font-size:19px; padding:16px 30px; border-radius:999px; display:inline-block;}
-/* Optional founders/team photo on the closing card (any deck that sets `teamPhoto`). */
-.s-closing .team-photo{
-  width:620px; height:300px; margin:30px 0 4px; border-radius:22px;
-  background-size:cover; background-position:center 0%; background-repeat:no-repeat;
-  border:6px solid rgba(255,255,255,.92); box-shadow:0 30px 62px -22px rgba(0,0,0,.65);
-}
-/* small avatar-chip row — the "tiny pictures" variant of the team photo,
-   any deck that sets `teamPhotos` (array) on its closing slide. */
-.s-closing .team-stack{display:flex; margin-top:34px;}
-.s-closing .team-avatar{
-  width:72px; height:72px; border-radius:50%; object-fit:cover;
-  border:4px solid rgba(255,255,255,.92); box-shadow:0 12px 24px -10px rgba(0,0,0,.55);
-  margin-left:-20px;
-}
-.s-closing .team-avatar:first-child{margin-left:0;}
 
 footer.host-footer{text-align:center; padding:10px 0 50px; color:var(--muted); font-size:12px;}
 
-/* transient "Saved" confirmation for edits written back to slides.js */
-#save-toast{position:fixed; right:22px; bottom:22px; z-index:9999; background:var(--deep); color:#fff;
+/* transient "Saved" confirmation for edits written back to the project file */
+#save-toast{position:fixed; right:22px; bottom:22px; z-index:9999; background:#12171c; color:#fff;
   font-size:14px; font-weight:600; padding:11px 18px; border-radius:12px; box-shadow:0 12px 30px -10px rgba(0,0,0,.5);
   border:1px solid rgba(255,255,255,.14); opacity:0; transform:translateY(10px); pointer-events:none;
   transition:opacity .18s ease, transform .18s ease;}
-#save-toast::before{content:"✓ "; color:var(--lime);}
+#save-toast::before{content:"✓ "; color:#4ade60;}
 #save-toast.show{opacity:1; transform:translateY(0);}
 #save-toast.error{background:#7a1d1d;}
 #save-toast.error::before{content:"✕ "; color:#ffb4b4;}
-
-/* ============================================================================
-   THEME: offlink  —  navy + gold, drawn from the Offlink logo
-   ----------------------------------------------------------------------------
-   The logo is two interlocking links (gold + navy) over a faint network mesh.
-   This skin re-maps the deck's shared palette to that brand and adds the mesh
-   as the signature background motif. Applied via `theme: 'offlink'` in
-   src/data/projects/offlink.js → `.theme-offlink` lives on each .slide (so the
-   PNG export keeps it) and on <body> (so the host chrome matches).
-
-   Most of the recolor is free: components read CSS vars, so remapping the vars
-   swaps green→navy/gold everywhere at once. Below the vars are the few pieces
-   that hard-code a colour (the cover wave, the mesh, small polish).
-   ========================================================================== */
-.theme-offlink{
-  --ink:#0b2447;            /* host chrome text */
-  --deep:#0a2143;          /* deep navy — base of every dark slide */
-  --deep-2:#123a70;        /* lifted navy — gradient/highlight of the base */
-  --mid:#1e5aa8;           /* link blue — used inside the decorative blob */
-  --lime:#f4a93c;          /* GOLD — the accent (highlights, eyebrow, CTA, nodes) */
-  --lime-2:#e07c10;        /* deep gold — gradient partner */
-  --cream:#f3ecdd;
-  --muted:#5b6b82;
-  --green-shape:#0a2143;
-}
-/* host chrome: keep the studio light but tint it toward the brand */
-body.theme-offlink{--paper:#eef2f8; --paper-2:#e2e9f4; --line:#cdd8e8;}
-
-/* the faint connectivity mesh reused by every dark slide */
-.theme-offlink.organic-bg{
-  background:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'1080'%20viewBox%3D'0%200%201080%201080'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba%28255%2C255%2C255%2C0.055%29'%20stroke-width%3D'2'%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'300'%20y2%3D'70'%2F%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'160'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'70'%20x2%3D'520'%20y2%3D'150'%2F%3E%3Cline%20x1%3D'520'%20y1%3D'150'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'950'%20y2%3D'170'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'880'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'1010'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'880'%20y2%3D'300'%2F%3E%3Cline%20x1%3D'880'%20y1%3D'300'%20x2%3D'700'%20y2%3D'250'%2F%3E%3Cline%20x1%3D'990'%20y1%3D'560'%20x2%3D'860'%20y2%3D'700'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'990'%20y2%3D'560'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'780'%20x2%3D'860'%20y2%3D'700'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'780'%20x2%3D'1010'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'860'%20y1%3D'700'%20x2%3D'700'%20y2%3D'560'%2F%3E%3Cline%20x1%3D'700'%20y1%3D'560'%20x2%3D'560'%20y2%3D'760'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'760'%20x2%3D'430'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'560'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'430'%20y1%3D'900'%20x2%3D'250'%20y2%3D'820'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'620'%20x2%3D'40'%20y2%3D'420'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'120'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'820'%20x2%3D'60'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'60'%20y1%3D'900'%20x2%3D'300'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'760'%20x2%3D'560'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'820'%20y1%3D'980'%20x2%3D'1010'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'560'%20y1%3D'1010'%20x2%3D'820'%20y2%3D'980'%2F%3E%3Cline%20x1%3D'160'%20y1%3D'360'%20x2%3D'40'%20y2%3D'420'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba%28244%2C169%2C60%2C0.16%29'%3E%3Ccircle%20cx%3D'90'%20cy%3D'120'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'70'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'520'%20cy%3D'150'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'760'%20cy%3D'90'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'950'%20cy%3D'170'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'360'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'880'%20cy%3D'300'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'700'%20cy%3D'250'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'560'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'780'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'860'%20cy%3D'700'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'700'%20cy%3D'560'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'560'%20cy%3D'760'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'430'%20cy%3D'900'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'820'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'120'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'60'%20cy%3D'900'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'1010'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'560'%20cy%3D'1010'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'820'%20cy%3D'980'%20r%3D'7'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'980'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'160'%20cy%3D'360'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'40'%20cy%3D'420'%20r%3D'5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / cover no-repeat,
-    radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);
-}
-/* gold node accent is enough; calm the coloured blobs so the mesh reads */
-.theme-offlink .organic-bg .blob-a{opacity:.6;}
-.theme-offlink .organic-bg .blob-b{opacity:.75;}
-
-/* screenshot: the phones crop carries its own navy, so match the frame's
-   letterbox to it (≈#011239) — otherwise the contain-bands seam against it */
-.theme-offlink .s-screenshot .shot-frame{background-color:#011239;}
-
-/* cover: navy tint + navy wave (was green) + two-tone "Off·link" wordmark */
-.theme-offlink .s-cover .photo-overlay{
-  background:linear-gradient(180deg, rgba(8,24,48,0.14) 0%, rgba(8,24,48,0.04) 42%, rgba(8,24,48,0.58) 100%);
-}
-/* our logo is a solid app icon (no baked shadow-padding), so drop the negative
-   margins the shared rule uses to trim a shadow — they'd overlap the tagline */
-.theme-offlink .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
-.theme-offlink .s-cover .wave{
-  background:bottom / 100% 100% no-repeat
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%230A2143'%2F%3E%3C%2Fsvg%3E");
-}
-.theme-offlink .s-cover .wordmark .lk{color:var(--lime);}
-
-/* closing: mesh behind, tighter stack to make room for the founders photo */
-.theme-offlink.s-closing{
-  background:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'1080'%20viewBox%3D'0%200%201080%201080'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba%28255%2C255%2C255%2C0.05%29'%20stroke-width%3D'2'%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'300'%20y2%3D'70'%2F%3E%3Cline%20x1%3D'300'%20y1%3D'70'%20x2%3D'520'%20y2%3D'150'%2F%3E%3Cline%20x1%3D'760'%20y1%3D'90'%20x2%3D'950'%20y2%3D'170'%2F%3E%3Cline%20x1%3D'950'%20y1%3D'170'%20x2%3D'1010'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'90'%20y1%3D'120'%20x2%3D'160'%20y2%3D'360'%2F%3E%3Cline%20x1%3D'160'%20y1%3D'360'%20x2%3D'120'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'1010'%20y1%3D'360'%20x2%3D'990'%20y2%3D'620'%2F%3E%3Cline%20x1%3D'120'%20y1%3D'620'%20x2%3D'250'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'990'%20y1%3D'620'%20x2%3D'860'%20y2%3D'900'%2F%3E%3Cline%20x1%3D'250'%20y1%3D'900'%20x2%3D'540'%20y2%3D'1010'%2F%3E%3Cline%20x1%3D'860'%20y1%3D'900'%20x2%3D'540'%20y2%3D'1010'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba%28244%2C169%2C60%2C0.14%29'%3E%3Ccircle%20cx%3D'90'%20cy%3D'120'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'70'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'520'%20cy%3D'150'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'760'%20cy%3D'90'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'950'%20cy%3D'170'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'1010'%20cy%3D'360'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'160'%20cy%3D'360'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'120'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'900'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'860'%20cy%3D'900'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'540'%20cy%3D'1010'%20r%3D'6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / cover no-repeat,
-    radial-gradient(140% 140% at 50% 0%, var(--deep-2) 0%, var(--deep) 65%);
-}
-.theme-offlink.s-closing .logo-big{width:92px; height:92px; margin-bottom:18px;}
-.theme-offlink.s-closing .close-head{font-size:58px;}
-.theme-offlink.s-closing .close-sub{margin-top:4px;}
-.theme-offlink.s-closing .credit{margin-top:24px;}
-.theme-offlink.s-closing .cta{margin-top:26px;}
-
-/* ============================================================================
-   THEME: interview  —  navy + teal, drawn from the FYP poster
-   ----------------------------------------------------------------------------
-   The poster (submissions/AI Powered Virtual Interview System/) uses a navy
-   #1b3a59/#2c547c palette on white. This skin carries that navy into the deck
-   and pairs it with teal (matching the designed eye/lens logo mark — no brand
-   logo was submitted, see src/assets/interview/logo.svg) instead of reusing
-   offlink's gold, so the two navy decks don't read as the same brand.
-   Applied via `theme: 'interview'` in src/data/projects/interview.js.
-   ========================================================================== */
-.theme-interview{
-  --ink:#0d1f33;
-  --deep:#071628;
-  --deep-2:#12314f;
-  --mid:#2c547c;
-  --lime:#2dd4bf;         /* teal — highlights, eyebrow, CTA, the "AI" in the wordmark */
-  --lime-2:#14b8a6;
-  --cream:#eaf6f5;
-  --muted:#5b7086;
-  --green-shape:#12314f;
-}
-body.theme-interview{--paper:#eef3f6; --paper-2:#e3eaf0; --line:#cdd9e2;}
-
-/* our logo is a flat app-icon (no baked shadow-padding), same fix as offlink */
-.theme-interview .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
-.theme-interview .s-cover .photo-overlay{
-  background:linear-gradient(180deg, rgba(7,22,40,0.16) 0%, rgba(7,22,40,0.05) 42%, rgba(7,22,40,0.62) 100%);
-}
-.theme-interview .s-cover .wave{
-  background:bottom / 100% 100% no-repeat
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%2312314F'%2F%3E%3C%2Fsvg%3E");
-}
-.theme-interview .s-cover .wordmark .ai{color:var(--lime);}
-
-/* ============================================================================
-   THEME: sairaab  —  deep teal + gold
-   ----------------------------------------------------------------------------
-   Deliberately not a repaint of the studio's default green — Stu already owns
-   that. Teal reads as "cooling the city" (Sairaab's own pitch: reducing urban
-   heat), gold nods to the Stanford/NIC/Google-Cloud recognition the team has
-   picked up. The brand's green survives only in the logo chip itself.
-   ========================================================================== */
-.theme-sairaab{
-  --ink:#0a2422;
-  --deep:#07211f;          /* deep teal — base of every dark slide */
-  --deep-2:#0f3b36;        /* lifted teal */
-  --mid:#1f6b5c;           /* muted sea-green, used inside the decorative blob */
-  --lime:#f2b134;          /* GOLD — the accent (highlights, eyebrow, CTA) */
-  --lime-2:#d99420;        /* deeper gold partner */
-  --cream:#f8f1de;
-  --muted:#5f7772;
-  --green-shape:#0f3b36;
-}
-body.theme-sairaab{--paper:#eef4f2; --paper-2:#e2ece8; --line:#cddbd6;}
-
-/* our logo is a flat app-icon (no baked shadow-padding), same fix as offlink */
-.theme-sairaab .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
-.theme-sairaab .s-cover .photo-overlay{
-  background:linear-gradient(180deg, rgba(7,33,31,0.16) 0%, rgba(7,33,31,0.05) 42%, rgba(7,33,31,0.60) 100%);
-}
-.theme-sairaab .s-cover .wave{
-  background:bottom / 100% 100% no-repeat
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%230F3B36'%2F%3E%3C%2Fsvg%3E");
-}
-
-/* ============================================================================
-   THEME: greenflow  —  deep blue + bright, light sky-blue accent
-   ----------------------------------------------------------------------------
-   Distinct from Stu's warm/cream/organic default: this is a monochrome-blue
-   "control room" feel, sky-blue rather than offlink's gold or interview's
-   teal accent. The circuit-trace tile below stands in for the other themes'
-   mesh/blob motif, echoing the logo's circuit mark, recoloured to match.
-   Applied via `theme: 'greenflow'` in src/data/projects/greenflow.js.
-   ========================================================================== */
-.theme-greenflow{
-  --ink:#0a1b2e;
-  --deep:#081c30;          /* deep blue — base of every dark slide */
-  --deep-2:#123049;        /* lifted blue */
-  --mid:#1f5b8a;           /* muted mid-blue, used inside the decorative blob */
-  --lime:#7dd3fc;          /* bright, light sky-blue — the accent (highlights, eyebrow, CTA) */
-  --lime-2:#38bdf8;        /* slightly deeper sky-blue partner */
-  --cream:#eaf6ff;
-  --muted:#5d7690;
-  --green-shape:#123049;
-}
-body.theme-greenflow{--paper:#eef5fb; --paper-2:#e1edf7; --line:#cfe0ee;}
-
-/* faint circuit-trace tile, echoing the logo's circuit mark — tiled instead of
-   a single fixed mesh so it reads at any crop */
-.theme-greenflow.organic-bg{
-  background:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'160'%20height%3D'160'%20viewBox%3D'0%200%20160%20160'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(255%2C255%2C255%2C0.07)'%20stroke-width%3D'2'%3E%3Cpath%20d%3D'M0%2040%20H50%20V110%20H160'%2F%3E%3Cpath%20d%3D'M70%200%20V40'%2F%3E%3Cpath%20d%3D'M110%20160%20V120%20H160'%2F%3E%3Cpath%20d%3D'M0%20120%20H30%20V70%20H70'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba(125%2C211%2C252%2C0.22)'%3E%3Ccircle%20cx%3D'50'%20cy%3D'40'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'50'%20cy%3D'110'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'40'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'110'%20cy%3D'120'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'30'%20cy%3D'120'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'30'%20cy%3D'70'%20r%3D'3.5'%2F%3E%3Ccircle%20cx%3D'70'%20cy%3D'70'%20r%3D'3.5'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") 0 0/160px 160px repeat,
-    radial-gradient(120% 120% at 0% 0%, var(--deep-2) 0%, var(--deep) 60%);
-}
-/* sky-blue accent in the tile is enough; calm the coloured blobs so the traces read */
-.theme-greenflow .organic-bg .blob-a{opacity:.55;}
-.theme-greenflow .organic-bg .blob-b{opacity:.75;}
-
-/* screenshot: the dashboard crop carries its own near-black navy, match the
-   frame's letterbox to it so the contain-bands don't seam against it */
-.theme-greenflow .s-screenshot .shot-frame{background-color:#0a0e13;}
-
-/* cover: blue tint + blue wave (was green) + light sky-blue "Flow" wordmark */
-.theme-greenflow .s-cover .photo-overlay{
-  background:linear-gradient(180deg, rgba(8,20,36,0.30) 0%, rgba(8,20,36,0.10) 42%, rgba(8,20,36,0.66) 100%);
-}
-/* our logo is a flat app-icon (no baked shadow-padding), same fix as offlink */
-.theme-greenflow .s-cover .cover-right .logo-chip{width:156px; height:156px; margin:0 0 6px 0;}
-.theme-greenflow .s-cover .wave{
-  background:bottom / 100% 100% no-repeat
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'360'%20viewBox%3D'0%200%201080%20360'%20preserveAspectRatio%3D'none'%3E%3Cpath%20d%3D'M0%2C120%20C20%2C116%2080%2C97%20120%2C95%20C160%2C93%20190%2C101%20240%2C110%20C290%2C119%20360%2C145%20420%2C147%20C480%2C149%20550%2C131%20600%2C121%20C650%2C111%20660%2C99%20720%2C87%20C780%2C75%20900%2C52%20960%2C49%20C1020%2C46%201060%2C66%201080%2C70%20L1080%2C360%20L0%2C360%20Z'%20fill%3D'%23123049'%2F%3E%3C%2Fsvg%3E");
-}
-.theme-greenflow .s-cover .wordmark .flow{color:var(--lime);}
-
-/* closing: circuit traces behind, echoing the organic-bg tile at slide scale */
-.theme-greenflow.s-closing{
-  background:
-    url("data:image/svg+xml,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20width%3D'1080'%20height%3D'1080'%20viewBox%3D'0%200%201080%201080'%3E%3Cg%20fill%3D'none'%20stroke%3D'rgba(255%2C255%2C255%2C0.06)'%20stroke-width%3D'2'%3E%3Cpath%20d%3D'M90%20120%20L90%20360%20L250%20360%20L250%20620%20L470%20620%20L470%20900'%2F%3E%3Cpath%20d%3D'M990%20140%20L990%20400%20L830%20400%20L830%20640%20L610%20640%20L610%20900'%2F%3E%3Cpath%20d%3D'M90%20120%20L300%20120'%2F%3E%3Cpath%20d%3D'M990%20140%20L780%20140'%2F%3E%3C%2Fg%3E%3Cg%20fill%3D'rgba(125%2C211%2C252%2C0.18)'%3E%3Ccircle%20cx%3D'90'%20cy%3D'120'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'300'%20cy%3D'120'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'90'%20cy%3D'360'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'360'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'250'%20cy%3D'620'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'470'%20cy%3D'620'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'470'%20cy%3D'900'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'140'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'780'%20cy%3D'140'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'990'%20cy%3D'400'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'830'%20cy%3D'400'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'830'%20cy%3D'640'%20r%3D'5'%2F%3E%3Ccircle%20cx%3D'610'%20cy%3D'640'%20r%3D'6'%2F%3E%3Ccircle%20cx%3D'610'%20cy%3D'900'%20r%3D'6'%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") center / cover no-repeat,
-    radial-gradient(140% 140% at 50% 0%, var(--deep-2) 0%, var(--deep) 65%);
-}

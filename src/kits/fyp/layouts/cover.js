@@ -1,5 +1,5 @@
-import { ASSETS } from '../data/active.js';
-import { photoId } from './helpers.js';
+import { ASSETS } from '../../../data/active.js';
+import { photoId } from '../../../lib/helpers.js';
 
 // Full-bleed hero photo, gradient overlay, decorative wave, and a bottom band
 // with the wordmark + logo + tagline. Optionally shows a "recognised by" badge

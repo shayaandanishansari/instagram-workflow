@@ -1,8 +1,8 @@
 import { SLIDES, ASSETS, PROJECT } from '../data/active.js';
 import { PROJECT_LIST } from '../data/projects/index.js';
 import { setActiveId } from '../data/active.js';
-import { TEMPLATES } from '../templates/index.js';
-import { pad, inputId } from '../templates/helpers.js';
+import { getKit } from '../kits/index.js';
+import { pad, inputId } from './helpers.js';
 import { fitScalers } from './scale.js';
 import { exportSlide, exportAll } from './export.js';
 
@@ -12,15 +12,21 @@ import { exportSlide, exportAll } from './export.js';
 export function render() {
   const grid = document.getElementById('grid');
 
-  // Per-deck skin. The class must live on the .slide element itself so it is
-  // captured by the html2canvas PNG export (which only snapshots the slide);
-  // it's also mirrored onto <body> so the host chrome matches.
+  // The deck's KIT (its design) and, within that kit, its THEME (a palette
+  // variant of that design). Both classes must live on the .slide element
+  // itself, so their CSS vars resolve where html2canvas snapshots; both are
+  // mirrored onto <body> so the studio chrome can be tinted to match.
+  const KIT = getKit(PROJECT.kit);
   const themeCls = PROJECT.theme ? ' theme-' + PROJECT.theme : '';
+  const kitCls = ' kit-' + KIT.id;
+  document.body.classList.add('kit-' + KIT.id);
   if (PROJECT.theme) document.body.classList.add('theme-' + PROJECT.theme);
 
   grid.innerHTML = SLIDES.map((s, idx) => {
-    const tpl = TEMPLATES[s.type];
-    if (!tpl) return `<div class="slot"><div class="slot-name">Unknown type: ${s.type}</div></div>`;
+    // A slide's `type` resolves against ITS KIT's layouts — two kits may both
+    // define a `cover`, and they need not look remotely alike.
+    const tpl = KIT.LAYOUTS[s.type];
+    if (!tpl) return `<div class="slot"><div class="slot-name">Unknown type "${s.type}" in kit "${KIT.id}"</div></div>`;
 
     const photoUI = s.photo
       ? `<button class="photo-swap-btn" data-input="${inputId(idx)}">Replace photo</button>
@@ -33,7 +39,7 @@ export function render() {
           <div class="slot-label"><span class="slot-index">${pad(idx + 1)}</span><span class="slot-name">${s.name}</span></div>
         </div>
         <div class="frame"><div class="scaler">
-          <div class="${tpl.cls}${themeCls}" id="slide-${idx + 1}">${tpl.render(s, idx)}${photoUI}</div>
+          <div class="${tpl.cls}${kitCls}${themeCls}" id="slide-${idx + 1}">${tpl.render(s, idx)}${photoUI}</div>
         </div></div>
         <div class="slot-foot"><button class="btn-mini" data-export="${idx}">Download PNG</button></div>
       </div>`;

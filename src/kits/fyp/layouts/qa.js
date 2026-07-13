@@ -1,5 +1,6 @@
-import { ASSETS } from '../data/active.js';
-import { blobs, photoId, attr } from './helpers.js';
+import { ASSETS } from '../../../data/active.js';
+import { photoId, attr } from '../../../lib/helpers.js';
+import { blobs } from '../helpers.js';
 
 // Eyebrow + highlighted question + supporting quote answer. Optionally shows a
 // small rotated demo photo card in the top-right (when the slide has `photo`),

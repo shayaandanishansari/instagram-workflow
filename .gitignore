@@ -26,3 +26,15 @@ src/assets/*
 # fresh clone. Drop each downloaded submission folder in here.
 submissions/*
 !submissions/README.md
+
+# Deck files. A deck is CONTENT derived from a submission: it carries real team
+# members' full names, their quotes and their social handles — the same PII the
+# two rules above exist to protect. So the decks themselves are never published.
+#
+# Tracked exceptions: the registry (code, no PII), the folder's README, and
+# example.js — an invented deck that is safe to publish and doubles as the
+# template. A fresh clone therefore still builds and runs, with placeholders.
+src/data/projects/*
+!src/data/projects/index.js
+!src/data/projects/example.js
+!src/data/projects/README.md

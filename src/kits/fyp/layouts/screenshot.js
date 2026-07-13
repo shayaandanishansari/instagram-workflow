@@ -1,4 +1,5 @@
-import { blobs, photoId } from './helpers.js';
+import { photoId } from '../../../lib/helpers.js';
+import { blobs } from '../helpers.js';
 
 // A single framed screenshot floating on the organic background.
 export const screenshot = {

@@ -4,8 +4,13 @@
 // Every *.js file in this folder that exports a `meta.id` is registered as a
 // project (a deck you can open/close from the topbar dropdown). There are no
 // import lines to maintain: drop in a new <id>.js following the stu.js contract
-// ({ meta:{id,name}, ASSETS, SLIDES }) and it appears in the switcher.
+// ({ meta:{id,name,kit?,theme?}, ASSETS, SLIDES }) and it appears in the switcher.
+//
+// A deck is CONTENT; how it looks is its KIT (src/kits/<id>/). A deck that names
+// no kit gets DEFAULT_KIT, so decks written before kits existed are unchanged.
 // ============================================================================
+import { DEFAULT_KIT } from '../../kits/index.js';
+
 const mods = import.meta.glob('./*.js', { eager: true });
 
 export const PROJECTS = {};
@@ -16,7 +21,8 @@ for (const path in mods) {
     id: m.meta.id,
     name: m.meta.name || m.meta.id,
     file: path.split('/').pop(), // e.g. 'stu.js' — the save plugin writes here
-    theme: m.meta.theme || null, // optional per-deck skin, e.g. 'offlink' → .theme-offlink
+    kit: m.meta.kit || DEFAULT_KIT, // which DESIGN renders it (src/kits/<id>/)
+    theme: m.meta.theme || null, // optional palette variant WITHIN that kit, e.g. 'offlink'
     SLIDES: m.SLIDES || [],
     ASSETS: m.ASSETS || {},
   };

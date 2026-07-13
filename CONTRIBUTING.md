@@ -20,10 +20,15 @@ disk); PNG export needs images to load same-origin.
 
 See the layout table in [`README.md`](./README.md). In short:
 
-- **Add / edit / reorder slides** → `src/data/slides.js` (the source of truth).
-- **Add a layout** → a file in `src/templates/` + register it in
-  `src/templates/index.js` + scoped CSS in `src/styles.css`.
-- **Add an image** → drop it in `src/assets/`, import it in `src/data/assets.js`.
+- **Add / edit / reorder slides** → that project's deck file,
+  `src/data/projects/<id>.js` (the source of truth for one carousel).
+- **Add a slide layout to an existing design** → a file in
+  `src/kits/<kit>/layouts/` + register it in that kit's `index.js` `LAYOUTS` map
+  + styles in `src/kits/<kit>/<kit>.css`, scoped under `.kit-<kit>`.
+- **Add a whole new design** → a new kit folder, `src/kits/<id>/`. See
+  [`src/kits/README.md`](./src/kits/README.md).
+- **Add an image** → drop it in `src/assets/<project>/`; it's auto-discovered, so
+  there's nothing to import. Reference it as `asset('<project>/file.png')`.
 
 ## Security-sensitive rule (please read)
 
