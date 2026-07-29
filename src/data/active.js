@@ -9,6 +9,8 @@
 // which keeps render/export simple (no reactive re-wiring).
 // ============================================================================
 import { PROJECTS, DEFAULT_PROJECT } from './projects/index.js';
+import { getKit } from '../kits/index.js';
+import { getFormat } from '../lib/formats.js';
 
 const KEY = 'activeProject';
 
@@ -28,3 +30,8 @@ export function setActiveId(id) {
 export const PROJECT = PROJECTS[getActiveId()];
 export const SLIDES = PROJECT.SLIDES;
 export const ASSETS = PROJECT.ASSETS;
+
+// The shape this deck is rendered and exported at: the deck's own choice, else
+// the shape its kit is drawn for, else square (src/lib/formats.js). Resolved
+// here so render, export, scaling AND a kit's own helpers all read one answer.
+export const CANVAS = getFormat(PROJECT.format || getKit(PROJECT.kit).format);

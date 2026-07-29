@@ -1,0 +1,329 @@
+/* ============================================================================
+   KIT: bowl  —  Stu's own product brand
+   ----------------------------------------------------------------------------
+   Every value here is taken from the app rather than invented for the post: the
+   warm dotted chat canvas, the deep-forest sidebar, the bright green of the
+   bowl, the gold of its spoon, and the editorial serif Stu greets you in. A
+   launch post should look like the thing it is launching.
+
+   Two rules this kit lives by:
+     - the accent green is a FILL colour, never a text colour on paper. At
+       #16C257 on #F3F1EC it is ~2.2:1 — fine behind a marker highlight or under
+       a button, unreadable as type. Green TEXT uses --grass-ink (#0C8A3D, 4.4:1).
+     - one loud thing per deck. Here it is the cart on the `ledger` slide;
+       everything around it is deliberately quiet.
+
+   EVERY rule is scoped under `.kit-bowl` — Vite bundles all kit stylesheets into
+   one sheet, so an unscoped `.head` here would restyle fyp, paper and shout.
+   Slide-level classes are compound (`.kit-bowl.s-cover`), inner elements are
+   descendants (`.kit-bowl .head`).
+
+   html2canvas-safe throughout: no filter, no clip-path, no background-clip:text,
+   and background images are set with LONGHANDS — the shorthand parser is the
+   flakiest part of its CSS support, and a texture that silently fails to export
+   is a bug you only find after posting.
+   ========================================================================== */
+.kit-bowl{
+  --paper:#F3F1EC;        /* the chat canvas */
+  --paper-deep:#E8E5DC;   /* hairlines inside cards */
+  --forest:#0E2419;       /* the sidebar */
+  --grass:#16C257;        /* the bowl / the New Chat button — FILLS ONLY */
+  --grass-ink:#0C8A3D;    /* the same green, dark enough to read as text */
+  --gold:#E0A81C;         /* the spoon */
+  --ink:#14201A;
+  --ink-soft:#666E67;
+  --line:#DCD8CE;
+
+  --serif:'Newsreader', Georgia, 'Times New Roman', serif;
+  --sans:'Plus Jakarta Sans', system-ui, sans-serif;
+  --mono:'DM Mono', ui-monospace, monospace;
+}
+
+/* ---------------- SLIDE BASE ---------------- */
+/* The 1080 box is the engine's contract (styles.css); this paints it. The dot
+   grid is the app's chat background, and it is the single texture that stops
+   this reading as one more cream-and-serif card. */
+.kit-bowl.slide{
+  font-family:var(--sans); -webkit-font-smoothing:antialiased;
+  color:var(--ink);
+  background-color:var(--paper);
+  background-repeat:repeat;
+  background-position:0 0;
+  background-size:34px 34px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Ccircle cx='2' cy='2' r='1.7' fill='%230E2419' fill-opacity='0.13'/%3E%3C/svg%3E");
+}
+
+.kit-bowl .pad{
+  position:absolute; inset:0; z-index:2;
+  padding:88px;
+  display:flex; flex-direction:column;
+}
+
+/* ---------------- MARKER HIGHLIGHT ---------------- */
+/* The engine lets deck copy carry <span class="mark">. Here it is a green
+   marker rather than fyp's lime. nowrap because html2canvas ignores
+   box-decoration-break, and a wrapped mark exports as one full-width bar. */
+.kit-bowl .mark{
+  padding:0 .12em; white-space:nowrap;
+  background-image:linear-gradient(transparent 46%, rgba(22,194,87,.32) 46%);
+}
+.kit-bowl .mark-gold{background-image:linear-gradient(transparent 46%, rgba(224,168,28,.36) 46%);}
+
+/* ---------------- HEADER ROW ---------------- */
+.kit-bowl .top{
+  display:flex; align-items:center; justify-content:space-between; gap:32px;
+  flex-shrink:0;
+}
+.kit-bowl .brandmark{display:flex; align-items:center; gap:18px;}
+.kit-bowl .brandmark img{
+  width:76px; height:76px; display:block; object-fit:contain; flex-shrink:0;
+}
+.kit-bowl .brandmark .wm{
+  font-family:var(--serif); font-weight:500;
+  font-size:62px; line-height:1; letter-spacing:-.015em;
+  color:var(--forest);
+}
+
+/* The status chip. Only the `live` variant gets the fill and the dot — it is
+   reserved for the one thing that is true right now. */
+.kit-bowl .pill{
+  display:flex; align-items:center; gap:14px; flex-shrink:0;
+  font-family:var(--mono); font-weight:500;
+  font-size:24px; letter-spacing:.15em; text-transform:uppercase;
+  padding:15px 26px; border-radius:999px;
+  border:2px solid var(--line); color:var(--ink-soft);
+}
+.kit-bowl .pill.live{background-color:var(--grass); border-color:var(--grass); color:var(--forest);}
+.kit-bowl .pill .led{
+  width:14px; height:14px; border-radius:50%; flex-shrink:0;
+  background-color:var(--forest);
+}
+
+/* ---------------- SHARED TYPE ---------------- */
+/* Feed-scale: a phone renders this card about 4in wide in a scrolling column,
+   so the display line is sized to be caught, not read at desk distance. */
+.kit-bowl .head{
+  font-family:var(--serif); font-weight:500;
+  font-size:96px; line-height:1.04; letter-spacing:-.025em;
+  color:var(--forest); margin:0;
+}
+/* The italic accent — the app's own "What's for dinner, <em>name</em>" move. */
+.kit-bowl .head em{font-style:italic; font-weight:400; color:var(--grass-ink);}
+
+.kit-bowl .lede{
+  font-family:var(--serif); font-weight:400; font-style:italic;
+  font-size:46px; line-height:1.3; color:var(--grass-ink);
+  margin-top:26px;
+}
+.kit-bowl .lede em{font-style:italic;}
+
+.kit-bowl .body{font-size:34px; line-height:1.55; color:var(--ink-soft); font-weight:400;}
+.kit-bowl .body b{font-weight:700; color:var(--ink);}
+
+/* `mid` is the block that floats: it takes the slack so the headline sits in
+   optical centre rather than being pinned under the header row. */
+.kit-bowl .mid{flex:1; display:flex; flex-direction:column; justify-content:center; min-height:0;}
+
+/* ---------------- CAROUSEL FOOTER ---------------- */
+.kit-bowl .foot{
+  margin-top:auto; padding-top:26px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between; gap:28px;
+}
+.kit-bowl .foot-right{display:flex; align-items:center; gap:20px;}
+.kit-bowl .note,
+.kit-bowl .swipe{
+  font-family:var(--mono); font-weight:500;
+  font-size:23px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+.kit-bowl .swipe{color:var(--forest);}
+.kit-bowl .swipe::after{content:" \2192";}
+.kit-bowl .dots{display:flex; align-items:center; gap:10px;}
+.kit-bowl .dots .dot{
+  width:12px; height:12px; border-radius:50%; display:block;
+  background-color:var(--ink); opacity:.2;
+}
+.kit-bowl .dots .dot.on{opacity:1; background-color:var(--grass-ink);}
+
+/* ============== TYPE: cover ============== */
+.kit-bowl.s-cover .head{font-size:124px;}
+
+/* The product in its four real moves. This is a genuine sequence — it is the
+   path a user actually walks — which is what earns it an arrowed track instead
+   of a bullet list. */
+.kit-bowl.s-cover .steps{
+  display:flex; align-items:center; flex-wrap:wrap; gap:16px;
+  margin-top:44px; flex-shrink:0;
+}
+.kit-bowl.s-cover .step{
+  font-family:var(--mono); font-weight:500;
+  font-size:26px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--forest);
+  padding:10px 20px; border-radius:999px;
+  background-color:rgba(22,194,87,.16);
+}
+.kit-bowl.s-cover .arrow{font-size:28px; color:var(--ink-soft); line-height:1;}
+
+/* ============== TYPE: statement ============== */
+.kit-bowl.s-statement .head{font-size:92px;}
+.kit-bowl.s-statement .body{margin-top:36px;}
+.kit-bowl.s-statement .kicker{
+  font-family:var(--serif); font-style:italic; font-weight:500;
+  font-size:44px; line-height:1.3; color:var(--forest);
+  margin-top:34px; flex-shrink:0;
+}
+
+/* ============== TYPE: shot ============== */
+/* The screenshot takes every pixel left over after the type — no arithmetic to
+   keep in sync as the copy changes.
+   `contain`, NOT `cover`: the interesting parts of this app are at its edges
+   (New Chat top-left, Checkout Now bottom-right), and cover ate both. Letter-
+   boxing against the card's white is invisible at the shot's own ratio and is
+   the forgiving behaviour if someone swaps in a photo of another shape. */
+.kit-bowl.s-shot .head{font-size:66px; margin:38px 0 26px;}
+.kit-bowl.s-shot .shot-frame{
+  flex:1; min-height:0;
+  border-radius:22px;
+  border:1px solid var(--line);
+  background-color:#FFFFFF;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:contain;
+  box-shadow:0 30px 56px -34px rgba(14,36,25,.55);
+}
+.kit-bowl.s-shot .caption{
+  font-size:30px; line-height:1.5; color:var(--ink-soft);
+  margin-top:26px; flex-shrink:0;
+}
+
+/* ============== TYPE: ledger  (THE SIGNATURE) ============== */
+/* The receipt. Stu's whole claim is that a conversation ends as a filled cart,
+   so the slide shows the cart — real items, real rupees, a rule, a total. The
+   card is the app's own cart rail lifted onto paper. */
+/* Margins here are tight on purpose: five cart rows plus a total is the tallest
+   block in the kit, and any more air above it pushes the footer out past the
+   pad's bottom edge. */
+.kit-bowl.s-ledger .head{font-size:82px; margin-top:28px;}
+.kit-bowl.s-ledger .ask{
+  font-family:var(--serif); font-style:italic; font-weight:400;
+  font-size:40px; line-height:1.3; color:var(--ink-soft);
+  margin-top:18px; flex-shrink:0;
+}
+.kit-bowl .cart{
+  margin-top:26px; flex-shrink:0;
+  background-color:#FFFFFF;
+  border:1px solid var(--line); border-radius:20px;
+  padding:30px 36px;
+  box-shadow:0 26px 52px -36px rgba(14,36,25,.5);
+}
+.kit-bowl .cart .row{
+  display:flex; align-items:baseline; gap:20px;
+  padding:10px 0;
+}
+.kit-bowl .cart .row + .row{border-top:1px solid var(--paper-deep);}
+.kit-bowl .cart .item{
+  flex:1; min-width:0;
+  font-size:31px; font-weight:500; line-height:1.2; color:var(--ink);
+}
+.kit-bowl .cart .qty{
+  font-family:var(--mono); font-size:25px; color:var(--ink-soft); flex-shrink:0;
+}
+.kit-bowl .cart .rs{
+  font-family:var(--mono); font-size:29px; color:var(--forest);
+  min-width:150px; text-align:right; flex-shrink:0;
+}
+/* the rule that turns a list into a receipt */
+.kit-bowl .cart .total{
+  display:flex; align-items:baseline; gap:20px;
+  margin-top:22px; padding-top:22px;
+  border-top:3px solid var(--forest);
+}
+.kit-bowl .cart .total .lbl{
+  flex:1; font-family:var(--mono); font-weight:500;
+  font-size:25px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft);
+}
+.kit-bowl .cart .total .amt{
+  font-family:var(--serif); font-weight:600; font-size:54px; line-height:1;
+  color:var(--forest); flex-shrink:0;
+}
+
+/* ============== TYPE: cta ============== */
+/* Inverted onto the sidebar's forest so the carousel lands somewhere darker
+   than it opened. On this ground the bright --grass finally becomes legible as
+   type, so the accent switches from --grass-ink to --grass. */
+.kit-bowl.s-cta{
+  background-color:var(--forest);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Ccircle cx='2' cy='2' r='1.7' fill='%23F3F1EC' fill-opacity='0.10'/%3E%3C/svg%3E");
+  color:var(--paper);
+}
+.kit-bowl.s-cta .brandmark .wm{color:var(--paper);}
+.kit-bowl.s-cta .head{font-size:116px; color:var(--paper);}
+.kit-bowl.s-cta .head em{color:var(--grass);}
+.kit-bowl.s-cta .lede{color:var(--grass); font-style:normal; font-weight:500; font-size:52px;}
+.kit-bowl.s-cta .credit{
+  font-size:30px; line-height:1.55; color:rgba(243,241,236,.66);
+  margin-top:40px; flex-shrink:0;
+}
+.kit-bowl.s-cta .handle,
+.kit-bowl.s-cta .note{color:rgba(243,241,236,.66);}
+.kit-bowl.s-cta .handle{
+  font-family:var(--mono); font-weight:500;
+  font-size:25px; letter-spacing:.1em;
+}
+.kit-bowl.s-cta .dots .dot{background-color:var(--paper);}
+.kit-bowl.s-cta .dots .dot.on{background-color:var(--grass); opacity:1;}
+
+/* ============================================================================
+   STORY (1080x1920) — the `launch` frame
+   ----------------------------------------------------------------------------
+   One card carrying the whole announcement, because a story gets one tap and no
+   swipe. Instagram's own chrome overlays it — the profile row and close button
+   eat roughly the top 250px, the reply bar the bottom 250px — so the padding
+   holds every readable thing inside that middle band. Nothing here is centred
+   for symmetry's sake: the eye runs top to bottom once.
+   ========================================================================== */
+/* The padding IS the safe zone. 264 at the top clears the profile row and close
+   button; 280 at the bottom clears the reply bar with room to spare — every
+   margin below is then tuned so the handle lands above that line rather than
+   under Instagram's own furniture. Add anything here and something falls into
+   the chrome. */
+.kit-bowl.s-launch .pad{padding:264px 88px 280px;}
+.kit-bowl.s-launch .head{font-size:128px; line-height:1.02; margin-top:30px;}
+.kit-bowl.s-launch .lede{font-size:48px; margin-top:18px;}
+
+/* 565px is the screenshot's own height at this width (904 / 1.6, from a
+   1920x1200 capture), so `contain` fits it exactly — no crop, no letterbox.
+   Swap in a photo of another shape and it letterboxes rather than crops. */
+.kit-bowl.s-launch .shot-frame{
+  height:565px; margin-top:56px; flex-shrink:0;
+  border-radius:22px;
+  border:1px solid var(--line);
+  background-color:#FFFFFF;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-size:contain;
+  box-shadow:0 30px 56px -34px rgba(14,36,25,.55);
+}
+
+/* The ask, on the sidebar's forest — the one dark block on the frame, so it is
+   the last thing the eye lands on before the handle. */
+.kit-bowl.s-launch .ask-block{
+  margin-top:36px; flex-shrink:0;
+  background-color:var(--forest); border-radius:20px;
+  padding:32px 44px;
+}
+.kit-bowl.s-launch .ask-head{
+  font-family:var(--serif); font-weight:500; font-size:60px; line-height:1.1;
+  color:var(--paper);
+}
+.kit-bowl.s-launch .ask-sub{
+  font-family:var(--mono); font-weight:500;
+  font-size:32px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--grass); margin-top:16px;
+}
+.kit-bowl.s-launch .ask-sub::after{content:" \2197";}
+.kit-bowl.s-launch .handle{
+  font-family:var(--mono); font-weight:500;
+  font-size:28px; letter-spacing:.1em; color:var(--ink-soft);
+  margin-top:24px; flex-shrink:0;
+}

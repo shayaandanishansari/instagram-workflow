@@ -1,9 +1,10 @@
 import html2canvas from 'html2canvas';
-import { SLIDES } from '../data/active.js';
+import { SLIDES, CANVAS } from '../data/active.js';
 import { pad } from './helpers.js';
 
-// Oversampling factor for exports. The slide is a true 1080x1080; rendering (and
-// writing out) at 2x yields a crisp 2160x2160 PNG. Bump to 3 for even sharper.
+// Oversampling factor for exports. The slide is a true 1080x1080 (or 1080x1920
+// for a story); rendering — and writing out — at 2x yields a crisp PNG at twice
+// that. Bump to 3 for even sharper.
 const EXPORT_SCALE = 2;
 
 // Turn a same-origin image URL into a data URL so html2canvas can't taint the
@@ -39,9 +40,10 @@ async function inlineAssets(root) {
   }
 }
 
-// Clone the slide into a clean, off-screen, untransformed 1080x1080 box and
-// capture THAT — so neither the preview scaling nor the cropped frame affect
-// the output. Returns a Promise that resolves once the PNG has downloaded.
+// Clone the slide into a clean, off-screen, untransformed box the size of the
+// deck's CANVAS and capture THAT — so neither the preview scaling nor the
+// cropped frame affect the output. Returns a Promise that resolves once the PNG
+// has downloaded.
 export async function exportSlide(idx) {
   const s = SLIDES[idx];
   const filename = s.file || 'stu-' + pad(idx + 1) + '.png';
@@ -49,7 +51,8 @@ export async function exportSlide(idx) {
 
   const wrapper = document.createElement('div');
   Object.assign(wrapper.style, {
-    position: 'fixed', top: '0', left: '-12000px', width: '1080px', height: '1080px',
+    position: 'fixed', top: '0', left: '-12000px',
+    width: CANVAS.w + 'px', height: CANVAS.h + 'px',
     margin: '0', padding: '0', overflow: 'hidden',
   });
 
@@ -67,12 +70,15 @@ export async function exportSlide(idx) {
     const rendered = await html2canvas(clone, { scale: EXPORT_SCALE, useCORS: true, backgroundColor: null });
     document.body.removeChild(wrapper);
 
-    // Normalize to an exact square at the oversampled resolution (source is already square).
-    const size = 1080 * EXPORT_SCALE;
+    // Normalize to exactly the canvas at the oversampled resolution — html2canvas
+    // can come back a pixel or two off, and Instagram is unforgiving about a
+    // story that isn't a true 9:16.
+    const w = CANVAS.w * EXPORT_SCALE;
+    const h = CANVAS.h * EXPORT_SCALE;
     const out = document.createElement('canvas');
-    out.width = size;
-    out.height = size;
-    out.getContext('2d').drawImage(rendered, 0, 0, size, size);
+    out.width = w;
+    out.height = h;
+    out.getContext('2d').drawImage(rendered, 0, 0, w, h);
 
     await new Promise((resolve) =>
       out.toBlob((blob) => {

@@ -24,6 +24,8 @@ for (const path in mods) {
   KITS[m.meta.id] = {
     id: m.meta.id,
     name: m.meta.name || m.meta.id,
+    // The shape this design is drawn for, when a deck doesn't say (src/lib/formats.js).
+    format: m.meta.format || null,
     LAYOUTS: m.LAYOUTS || {},
   };
 }

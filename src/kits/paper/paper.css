@@ -1,0 +1,221 @@
+/* ============================================================================
+   KIT: paper  —  the Highlighter brand design (highlighter.world)
+   ----------------------------------------------------------------------------
+   A port of the landing site (website/v1_landing) onto the 1080x1080 canvas:
+   ruled notebook paper, a red margin rule, the Archivo Black wordmark on its
+   yellow highlighter swipe, mono eyebrows/buttons, and marker-pen highlights.
+
+   EVERY rule is scoped under `.kit-paper` — Vite bundles all kit stylesheets
+   into one sheet, so an unscoped `.eyebrow` here would restyle the fyp kit.
+   Slide-level classes are compound (`.kit-paper.s-announce`), inner elements
+   are descendants (`.kit-paper .eyebrow`).
+
+   Everything is html2canvas-safe: no clip-path (the torn swipe is an inline SVG
+   polygon), no background-size tricks on the marks (a two-stop gradient does
+   the same job), and the ruled paper is an SVG tile rather than a repeating
+   gradient.
+   ========================================================================== */
+.kit-paper{
+  --paper:#FAF7EE;
+  --paper-line:#E7E1CB;
+  --margin-line:#C1443B;
+  --ink:#1C1B17;
+  --ink-soft:#57544B;
+  --yellow:#FFE45E;
+  --yellow-soft:rgba(255,228,94,.55);
+  --pink-soft:rgba(255,173,201,.55);
+  --green-soft:rgba(174,235,160,.55);
+  --blue-soft:rgba(166,216,255,.55);
+  --card:#FFFFFE;
+  --card-border:#E7E1CE;
+  --line:64px;             /* the ruled grid — every block snaps to it */
+}
+
+/* ---------------- SLIDE BASE ---------------- */
+/* The 1080x1080 box is the engine's contract (styles.css); this paints it. */
+.kit-paper.slide{
+  font-family:'Work Sans', system-ui, sans-serif; -webkit-font-smoothing:antialiased;
+  color:var(--ink);
+  background:var(--paper) repeat-y top left / 100% var(--line)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='64' preserveAspectRatio='none'%3E%3Crect width='8' height='62' fill='%23FAF7EE'/%3E%3Crect y='62' width='8' height='2' fill='%23E7E1CB'/%3E%3C/svg%3E");
+}
+
+/* the red margin rule, as on the site */
+.kit-paper .rule{
+  position:absolute; top:0; bottom:0; left:112px;
+  width:2px; background:var(--margin-line); opacity:.35; z-index:1;
+}
+
+.kit-paper .pad{
+  position:absolute; inset:0; z-index:2;
+  padding:76px 88px 84px 168px;
+  display:flex; flex-direction:column;
+}
+
+/* ---------------- MARKER HIGHLIGHT ---------------- */
+/* The site animates background-size; a still frame just wants the end state,
+   so it's a two-stop gradient that inks the lower half of the line. */
+/* nowrap so a highlight can never break across two lines: html2canvas ignores
+   box-decoration-break, and a wrapped mark exports as one full-width bar. It
+   moves to the next line whole instead. */
+.kit-paper .mark{
+  padding:0 .1em; white-space:nowrap;
+  background-image:linear-gradient(transparent 44%, var(--yellow-soft) 44%);
+}
+.kit-paper .mark-pink { background-image:linear-gradient(transparent 44%, var(--pink-soft) 44%); }
+.kit-paper .mark-green{ background-image:linear-gradient(transparent 44%, var(--green-soft) 44%); }
+.kit-paper .mark-blue { background-image:linear-gradient(transparent 44%, var(--blue-soft) 44%); }
+
+/* ---------------- WORDMARK ---------------- */
+.kit-paper .wordmark{position:relative; display:inline-block; flex-shrink:0;}
+/* the torn highlighter swipe behind the letters */
+.kit-paper .wordmark .swipe{
+  position:absolute; left:-.06em; right:-.1em; top:.36em; bottom:.08em;
+  transform:rotate(-1.4deg); z-index:0;
+  /* the width/height are load-bearing: an SVG with only a viewBox has no intrinsic
+     size, and html2canvas's drawImage() paints nothing for a sizeless image — the
+     swipe would vanish from the exported PNG while looking right on screen. */
+  background:0 0 / 100% 100% no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,10 96,0 100,86 4,100' fill='%23FFE45E'/%3E%3C/svg%3E");
+}
+.kit-paper .wordmark .wm-text{
+  position:relative; z-index:1; display:block;
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:96px; line-height:1; letter-spacing:-.01em;
+}
+
+/* ---------------- STATS BADGE ---------------- */
+.kit-paper .badge{
+  display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0;
+  background:var(--card); border:2px solid var(--card-border); border-radius:999px;
+  padding:26px 34px;
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:22px; line-height:1.4; color:#000; text-align:center;
+}
+.kit-paper .badge .num{font-size:32px; line-height:1;}
+.kit-paper .badge .lbl{font-family:'Work Sans', sans-serif; font-weight:500; font-size:24px;}
+.kit-paper .badge .growing{
+  display:flex; align-items:center; gap:10px; font-size:30px; margin-top:2px;
+}
+.kit-paper .badge .dot{width:14px; height:14px; border-radius:50%; background:#22C55E;}
+
+/* ---------------- SHARED TYPE ---------------- */
+.kit-paper .eyebrow{
+  font-family:'IBM Plex Mono', monospace; font-weight:600;
+  font-size:24px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink-soft);
+}
+/* Feed-scale type: a phone shows this card about 4in wide in a scrolling
+   column, so the headline is sized to be read at a glance, not at reading
+   distance like the site it's drawn from. */
+.kit-paper .title{
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:96px; line-height:1.04; letter-spacing:-.02em;
+  margin:0;
+}
+.kit-paper .body{font-size:34px; line-height:var(--line); font-weight:400;}
+.kit-paper .body b{font-weight:700;}
+
+/* ---------------- CAROUSEL FOOTER ---------------- */
+/* Position dots + the swipe cue: the affordances that say "post", not "page". */
+.kit-paper .foot{
+  margin-top:auto; padding-top:40px;
+  display:flex; align-items:center; justify-content:space-between; gap:30px;
+}
+.kit-paper .foot-right{display:flex; align-items:center; gap:20px;}
+.kit-paper .swipe-cue{
+  display:flex; align-items:center; gap:10px;
+  font-family:'IBM Plex Mono', monospace; font-weight:600;
+  font-size:24px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--ink);
+}
+.kit-paper .swipe-cue::after{content:"→"; font-size:30px; line-height:1;}
+.kit-paper .dots{display:flex; align-items:center; gap:10px;}
+.kit-paper .foot .dot{
+  width:14px; height:14px; border-radius:50%;
+  background:var(--ink); opacity:.22;
+}
+.kit-paper .foot .dot.on{opacity:1; background:var(--margin-line);}
+
+/* ---------------- THE ASK ---------------- */
+/* No buttons: a PNG in the feed has nothing to tap. The primary ask is an
+   instruction pointing up at Instagram's own Follow button; LinkedIn is a
+   stated fact, not a control. */
+.kit-paper .ask{display:flex; flex-direction:column; align-items:flex-start; gap:18px;}
+.kit-paper .ask-primary{
+  display:flex; align-items:center; gap:16px;
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:34px; line-height:1.15;
+  padding:18px 28px; border-radius:6px;
+  background:var(--ink); color:var(--paper);
+  transform:rotate(-.8deg);
+}
+.kit-paper .ask-primary .arrow-up{font-size:44px; line-height:1;}
+/* the second ask — outlined, tilted the other way, pointing down at the paper
+   plane. Lighter than the follow slab so the two don't compete. */
+.kit-paper .ask-share{
+  display:flex; align-items:center; gap:16px;
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:28px; line-height:1.15;
+  padding:15px 24px; border-radius:6px;
+  border:3px solid var(--ink); background:var(--card); color:var(--ink);
+  transform:rotate(.7deg);
+}
+.kit-paper .ask-share .ico{width:32px; height:32px; flex-shrink:0; display:block;}
+.kit-paper .ask-share .arrow-down{font-size:36px; line-height:1;}
+.kit-paper .ask-also{
+  display:flex; align-items:center; gap:14px;
+  font-family:'IBM Plex Mono', monospace; font-weight:500;
+  font-size:26px; color:var(--ink-soft);
+}
+/* the glyph is an <img> (see helpers.js) — html2canvas is reliable with those */
+.kit-paper .ask-also .ico{width:28px; height:28px; flex-shrink:0; display:block; opacity:.75;}
+
+/* ============== TYPE: announce ============== */
+/* Wordmark + badge, an eyebrow, the headline, and a rotated sticky note whose
+   lines are the update itself. */
+.kit-paper.s-announce .head-row{
+  display:flex; align-items:center; justify-content:space-between; gap:40px;
+  margin-bottom:56px;
+}
+.kit-paper.s-announce .eyebrow{margin-bottom:20px;}
+.kit-paper.s-announce .title{margin-bottom:40px;}
+.kit-paper.s-announce .note-line{font-size:36px;}
+
+.kit-paper .note{
+  background:var(--card); border:2px solid var(--card-border); border-radius:4px;
+  padding:38px 46px; transform:rotate(-.6deg);
+  box-shadow:0 22px 44px -30px rgba(0,0,0,.45);
+}
+.kit-paper .note-line{
+  display:flex; align-items:baseline; gap:20px;
+  font-size:36px; line-height:1.35; font-weight:500;
+}
+.kit-paper .note-line + .note-line{margin-top:28px;}
+.kit-paper .note-line .tick{
+  font-family:'Archivo Black', sans-serif; font-size:30px; color:var(--ink);
+  flex-shrink:0; transform:translateY(-2px);
+}
+.kit-paper.s-announce .kicker{
+  font-family:'Caveat', cursive; font-weight:600;
+  font-size:46px; color:var(--ink-soft);
+}
+
+/* ============== TYPE: cta ============== */
+/* This slide carries the most copy of any in the kit, so its type sits a step
+   below the announce scale — that's what keeps the buttons on the canvas. */
+.kit-paper.s-cta .head-row{
+  display:flex; align-items:center; justify-content:space-between; gap:40px;
+  margin-bottom:40px;
+}
+.kit-paper.s-cta .head-row .wm-text{font-size:64px;}
+.kit-paper.s-cta .title{font-size:80px; margin-bottom:30px;}
+.kit-paper.s-cta .body{font-size:28px; line-height:46px; margin-bottom:36px;}
+/* the ask takes the slack, so the footer must NOT also claim margin-top:auto
+   — two auto margins would split the free space and push the footer off-canvas */
+.kit-paper.s-cta .ask{margin-top:auto;}
+.kit-paper.s-cta .foot{margin-top:0; padding-top:30px;}
+.kit-paper.s-cta .handle{
+  font-family:'IBM Plex Mono', monospace; font-weight:500;
+  font-size:24px; color:var(--ink-soft);
+}

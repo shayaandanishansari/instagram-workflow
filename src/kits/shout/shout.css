@@ -1,0 +1,175 @@
+/* ============================================================================
+   KIT: shout  —  the loud recruitment poster
+   ----------------------------------------------------------------------------
+   Black canvas, one enormous headline in the middle, and a ring of colour-coded
+   word chips around it. Where `fyp` showcases somebody else's project and
+   `paper` is Highlighter's notebook voice, this kit exists to be read across a
+   room (or, more to the point, at thumbnail size in a feed).
+
+   EVERY rule is scoped under `.kit-shout` — Vite bundles all kit stylesheets
+   into one sheet, so an unscoped `.hero` here would restyle the other kits.
+
+   html2canvas-safe: no `filter`, no clip-path, no background-clip:text. The
+   colour comes from solid circles at low opacity and from the chips themselves.
+   ========================================================================== */
+.kit-shout{
+  --ink:#08080A;
+  --white:#FFFFFF;
+  --dim:rgba(255,255,255,.62);
+
+  --c0:#FF9F1C;   /* orange — the reference deck's FYP */
+  --c1:#FF5D8F;   /* pink */
+  --c2:#4CC9F0;   /* cyan */
+  --c3:#C8F135;   /* lime */
+  --c4:#B388FF;   /* violet */
+  --c5:#FFE45E;   /* brand yellow */
+}
+
+/* ---------------- SLIDE BASE ---------------- */
+.kit-shout.slide{
+  font-family:'Work Sans', system-ui, sans-serif; -webkit-font-smoothing:antialiased;
+  background:var(--ink); color:var(--white); overflow:hidden;
+}
+
+/* THE BACKDROP — two layers, both images (see helpers.js for why):
+   .burst  the colour rays fanning out from behind the headline, faded to ink at
+           the edges so the word ring stays legible over them
+   .hatch  a fine cross-hatch over the top, which is what stops the black from
+           reading as a flat fill in the corners the burst doesn't reach */
+.kit-shout .burst{
+  position:absolute; inset:0; z-index:1;
+  background-position:center; background-size:cover; background-repeat:no-repeat;
+}
+/* longhands, not the `background` shorthand: html2canvas's shorthand parsing is
+   the flakiest part of its CSS support, and a tile that silently fails to export
+   is exactly the bug this kit already hit once. */
+.kit-shout .hatch{
+  position:absolute; inset:0; z-index:1; opacity:.5;
+  background-repeat:repeat;
+  background-position:0 0;
+  background-size:64px 64px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M32 27v10M27 32h10' stroke='%23FFFFFF' stroke-opacity='0.14' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* ---------------- THE WORD RING ---------------- */
+/* Chips are placed by inline left/top/rotate from the kit's anchor table; only
+   their look lives here. Every third is filled, the rest outlined, so the ring
+   has rhythm instead of reading as a uniform border. */
+.kit-shout .words{position:absolute; inset:0; z-index:2;}
+.kit-shout .word{
+  position:absolute; white-space:nowrap;
+  font-weight:700; font-size:28px; letter-spacing:.06em; text-transform:uppercase;
+  padding:12px 22px; border-radius:999px;
+  border:3px solid currentColor;
+}
+.kit-shout .word.c0{color:var(--c0);}
+.kit-shout .word.c1{color:var(--c1);}
+.kit-shout .word.c2{color:var(--c2);}
+.kit-shout .word.c3{color:var(--c3);}
+.kit-shout .word.c4{color:var(--c4);}
+.kit-shout .word.c5{color:var(--c5);}
+/* filled chips: the accent becomes the background, the text goes back to black */
+.kit-shout .word.filled.c0{background:var(--c0);}
+.kit-shout .word.filled.c1{background:var(--c1);}
+.kit-shout .word.filled.c2{background:var(--c2);}
+.kit-shout .word.filled.c3{background:var(--c3);}
+.kit-shout .word.filled.c4{background:var(--c4);}
+.kit-shout .word.filled.c5{background:var(--c5);}
+/* Must come after the .cN colour rules (same specificity, later wins) so a
+   filled chip's text goes black. The border stays, transparent, so a filled
+   pill is exactly the size of an outlined one — the ring must not jitter. */
+.kit-shout .word.filled{color:var(--ink); border-color:transparent;}
+
+/* ---------------- THE CORE ---------------- */
+/* Centred block, capped well inside the ring: the widest line (the hero) is
+   ~640px, which leaves the chips their lane on either side. */
+.kit-shout .core{
+  position:absolute; z-index:4;
+  left:50%; top:50%; transform:translate(-50%,-50%);
+  width:760px; text-align:center;
+}
+.kit-shout .kicker{
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:68px; line-height:1; letter-spacing:-.01em;
+  margin-bottom:6px;
+}
+/* The shout. Sized so it survives being 120px wide in a feed. */
+.kit-shout .hero{
+  font-family:'Archivo Black', sans-serif; font-weight:400;
+  font-size:260px; line-height:.92; letter-spacing:-.03em;
+  color:var(--c0);
+}
+/* Per-letter accents: the deck may wrap letters in .c1/.c2/.c3 inside `hero`
+   (it's an editable string, so the HTML rides along and still saves). */
+.kit-shout .hero .c1{color:var(--c1);}
+.kit-shout .hero .c2{color:var(--c2);}
+.kit-shout .hero .c3{color:var(--c3);}
+
+/* The ask, on a torn highlighter swipe — the one piece of Highlighter's paper
+   design that carries over, so the two kits read as the same publisher. The
+   swipe is a sibling span (not a pseudo-element) because html2canvas paints
+   those reliably; the text sits on top and stays editable.
+
+   `width:fit-content` + auto margins, NOT inline-block: html2canvas measures a
+   block box far more reliably than a shrink-to-fit inline one, and a mismeasured
+   box here clips the ask in half in the exported PNG. Same result on screen. */
+.kit-shout .sub{
+  position:relative; width:fit-content;
+  margin:26px auto 0; padding:8px 16px;
+}
+/* width/height on the SVG are required, not cosmetic — see helpers.js: without an
+   intrinsic size html2canvas draws nothing, and the ask's black text is then
+   black-on-black in the export. */
+.kit-shout .sub .swipe{
+  position:absolute; left:-18px; right:-18px; top:0; bottom:0; z-index:0;
+  transform:rotate(-1.2deg);
+  background-repeat:no-repeat;
+  background-position:0 0;
+  background-size:100% 100%;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpolygon points='0,8 97,0 100,90 3,100' fill='%23FFE45E'/%3E%3C/svg%3E");
+}
+.kit-shout .sub-text{
+  position:relative; z-index:1; display:block;
+  font-weight:700; font-style:italic; font-size:52px; line-height:1.25;
+  color:var(--ink);
+}
+.kit-shout .note{
+  margin-top:24px;
+  font-family:'IBM Plex Mono', monospace; font-weight:500;
+  font-size:26px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim);
+}
+
+/* ---------------- FOOTER ---------------- */
+.kit-shout .handle{
+  position:absolute; z-index:5; left:0; right:0; bottom:34px;
+  text-align:center;
+  font-family:'IBM Plex Mono', monospace; font-weight:500;
+  font-size:24px; color:var(--dim);
+}
+
+/* ============================================================================
+   STORY (1080x1920)
+   ----------------------------------------------------------------------------
+   Same design, taller canvas. Two things change beyond the numbers:
+
+   1. The word ring gets its own anchor table (helpers.js) — percentages alone
+      would strand the chips at the extreme ends of a 1920px canvas.
+   2. Instagram's own UI overlays a story: the profile row and close button eat
+      roughly the top 250px, and the reply bar the bottom ~250px. Nothing that
+      must be READ goes there, so the footer sits well above the bottom edge and
+      the ring's own top row starts below the header.
+   ========================================================================== */
+.kit-shout.fmt-story .core{width:880px; top:48%;}
+.kit-shout.fmt-story .kicker{font-size:76px; margin-bottom:10px;}
+.kit-shout.fmt-story .hero{font-size:300px;}
+.kit-shout.fmt-story .sub{margin-top:34px;}
+.kit-shout.fmt-story .sub-text{font-size:58px;}
+.kit-shout.fmt-story .note{margin-top:30px; font-size:28px;}
+
+.kit-shout.fmt-story .handle{bottom:150px; font-size:26px;}
+
+/* The burst is `cover`, so on a 9:16 canvas it scales up until it fills the
+   height — which pushes its centre (and the widest part of every ray) to the
+   middle of the story, right where the headline is. That's the behaviour we
+   want, so there's nothing to override; it's stated here because it looks like
+   an omission otherwise. */

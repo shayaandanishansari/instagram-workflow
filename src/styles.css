@@ -5,10 +5,11 @@
    toast) — NOT the deck. A slide's look belongs to its kit, in
    src/kits/<id>/<id>.css, scoped under `.kit-<id>`.
 
-   The only slide rules here are the ones EVERY kit must obey: the 1080x1080
-   box, the editing affordance, and the "Replace photo" button (which render.js
-   injects, so it exists whatever the kit draws). Everything else — background,
-   type, colour — is the kit's.
+   The only slide rules here are the ones EVERY kit must obey: the canvas box
+   (1080x1080, or 1080x1920 for a story — see src/lib/formats.js), the editing
+   affordance, and the "Replace photo" button (which render.js injects, so it
+   exists whatever the kit draws). Everything else — background, type, colour —
+   is the kit's.
 
    The vars below are the CHROME palette only. Deck palettes (--deep, --lime, …)
    live in each kit's stylesheet, so a new kit can't be tinted by the old one.
@@ -104,8 +105,8 @@ body{
 .slot-name{font-size:13.5px; font-weight:700;}
 .slot-foot{display:flex; gap:8px;}
 
-/* The preview frame scales the true 1080px slide down to fit its column.
-   The slide itself always stays a real 1080x1080 internally. The frame's own
+/* The preview frame scales the true-size slide down to fit its column. The slide
+   itself always stays a real 1080x1080 (or 1080x1920) internally. The frame's own
    background is just the letterbox behind an opaque slide — deliberately a
    neutral dark, not a kit colour. */
 .frame{
@@ -116,6 +117,12 @@ body{
 }
 .frame .scaler{position:absolute; top:0; left:0; width:1080px; height:1080px; transform-origin:top left;}
 
+/* A story deck is the same 1080 wide, twice as tall. render.js stamps fmt-<id>
+   on the frame, the scaler and the slide from src/lib/formats.js; scale.js reads
+   the scaler's width, so the preview fits itself. */
+.frame.fmt-story{aspect-ratio:1080/1920;}
+.frame .scaler.fmt-story{height:1920px;}
+
 input[type=file]{display:none;}
 
 /* ---------------- SLIDE CANVAS (the contract every kit obeys) ---------------- */
@@ -123,6 +130,7 @@ input[type=file]{display:none;}
 .slide{
   width:1080px; height:1080px; position:relative; overflow:hidden;
 }
+.slide.fmt-story{height:1920px;}
 /* Editing affordance — the studio's, not the kit's, so every kit gets it free. */
 .slide [contenteditable="true"]{outline:none; cursor:text; border-radius:6px;}
 .slide [contenteditable="true"]:hover{box-shadow:0 0 0 3px rgba(255,255,255,0.25);}

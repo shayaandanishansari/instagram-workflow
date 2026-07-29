@@ -12,7 +12,8 @@ new project or a new design is added.
 ```
 render.js    Builds the studio: one slot per slide, plus all the interaction wiring.
 export.js    PNG export via html2canvas (single slide + whole deck).
-scale.js     Fits the true 1080px slide into its (smaller) preview column.
+scale.js     Fits the true-size slide into its (smaller) preview column.
+formats.js   The canvas shapes: square (1080x1080) and story (1080x1920).
 helpers.js   The few helpers that are part of the ENGINE's contract with a kit.
 ```
 
@@ -62,10 +63,10 @@ The built static site has no server, so edits there stay in the browser.
 
 ## `export.js` notes
 
-- Clones the slide into an off-screen, untransformed 1080×1080 box, so neither
-  the preview scaling nor the rounded frame affects the output.
+- Clones the slide into an off-screen, untransformed box the size of the deck's
+  `CANVAS`, so neither the preview scaling nor the rounded frame affects the output.
 - Inlines every image and background-image to a data URL first, so `html2canvas`
   can't taint the canvas.
 - `backgroundColor: null` **on purpose** — every kit paints its own opaque slide
   background, so hardcoding one here would leak a kit's palette into the engine.
-- Oversamples by `EXPORT_SCALE` (2 → a 2160×2160 PNG).
+- Oversamples by `EXPORT_SCALE` (2 → a 2160×2160 PNG; 2160×3840 for a story).

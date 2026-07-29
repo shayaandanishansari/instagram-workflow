@@ -23,6 +23,7 @@ for (const path in mods) {
     file: path.split('/').pop(), // e.g. 'stu.js' — the save plugin writes here
     kit: m.meta.kit || DEFAULT_KIT, // which DESIGN renders it (src/kits/<id>/)
     theme: m.meta.theme || null, // optional palette variant WITHIN that kit, e.g. 'offlink'
+    format: m.meta.format || null, // optional canvas shape: 'square' | 'story' (src/lib/formats.js)
     SLIDES: m.SLIDES || [],
     ASSETS: m.ASSETS || {},
   };

@@ -1,4 +1,4 @@
-import { SLIDES, ASSETS, PROJECT } from '../data/active.js';
+import { SLIDES, ASSETS, PROJECT, CANVAS } from '../data/active.js';
 import { PROJECT_LIST } from '../data/projects/index.js';
 import { setActiveId } from '../data/active.js';
 import { getKit } from '../kits/index.js';
@@ -22,6 +22,11 @@ export function render() {
   document.body.classList.add('kit-' + KIT.id);
   if (PROJECT.theme) document.body.classList.add('theme-' + PROJECT.theme);
 
+  // The deck's CANVAS (square feed post / story). The class sizes the .slide box
+  // and its preview frame, and lets a kit that supports both shapes style the
+  // difference (see src/lib/formats.js).
+  const fmtCls = ' fmt-' + CANVAS.id;
+
   grid.innerHTML = SLIDES.map((s, idx) => {
     // A slide's `type` resolves against ITS KIT's layouts — two kits may both
     // define a `cover`, and they need not look remotely alike.
@@ -38,8 +43,8 @@ export function render() {
         <div class="slot-head">
           <div class="slot-label"><span class="slot-index">${pad(idx + 1)}</span><span class="slot-name">${s.name}</span></div>
         </div>
-        <div class="frame"><div class="scaler">
-          <div class="${tpl.cls}${kitCls}${themeCls}" id="slide-${idx + 1}">${tpl.render(s, idx)}${photoUI}</div>
+        <div class="frame${fmtCls}"><div class="scaler${fmtCls}">
+          <div class="${tpl.cls}${kitCls}${themeCls}${fmtCls}" id="slide-${idx + 1}">${tpl.render(s, idx)}${photoUI}</div>
         </div></div>
         <div class="slot-foot"><button class="btn-mini" data-export="${idx}">Download PNG</button></div>
       </div>`;
@@ -47,7 +52,8 @@ export function render() {
 
   // Top-bar bits that depend on the deck.
   document.getElementById('brandLogo').src = ASSETS.logo;
-  document.getElementById('brandCount').textContent = SLIDES.length + ' slides · 1080×1080';
+  document.getElementById('brandCount').textContent =
+    SLIDES.length + ' slides · ' + CANVAS.label + ' · ' + CANVAS.w + '×' + CANVAS.h;
   document.getElementById('exportAllBtn').textContent = 'Download all ' + SLIDES.length;
   document.getElementById('brandTitle').textContent = PROJECT.name;
   document.title = PROJECT.name + ' — Instagram Post Studio';

@@ -71,3 +71,11 @@ like a recolour of the old one.
 - **`fyp/`** — the FYP Showcase design (the original studio look): cover,
   screenshot, qa, audience, closing. `DEFAULT_KIT`, so decks that name no kit get
   this one.
+- **`paper/`** — Highlighter's notebook voice: ruled paper, marker, handwriting.
+- **`shout/`** — the loud recruitment poster: black canvas, one enormous
+  headline, a ring of colour-coded word chips. Square *or* story.
+- **`bowl/`** — Stu's own product brand: cream chat canvas, forest sidebar,
+  bowl-green, editorial serif. A carousel that walks you through the product.
+- **`beacon/`** — the one-card "we're live" announcement: Stu's palette inverted
+  into the dark, broadcast rings, one headline, one ask. Single `announce`
+  layout.
