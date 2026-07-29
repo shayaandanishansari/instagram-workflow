@@ -41,9 +41,10 @@ src/
       helpers.js          Decoration for THIS kit only (blobs, tree grove)
   lib/
     helpers.js            Engine helpers every kit renders against (pad, photoId, …)
-    render.js             Builds the grid; stamps kit-<id> + theme-<x> on each slide
+    formats.js            The CANVAS shapes: square 1080×1080 | story 1080×1920
+    render.js             Builds the grid; stamps kit-<id> + theme-<x> + fmt-<x> per slide
     export.js, scale.js   PNG export (html2canvas) and preview scaling
-  styles.css              Studio chrome + the 1080×1080 canvas contract — NOT deck design
+  styles.css              Studio chrome + the slide-canvas contract — NOT deck design
 vite-plugin-save-slides.js  Dev-only: saves in-browser text edits back to the active project file
 ```
 
@@ -71,6 +72,18 @@ Two constraints the engine imposes on any kit:
 Themes (`meta.theme`) are palette variants *within* a kit — same layouts,
 different colours (see the four at the bottom of `fyp.css`). They cannot give you
 a different design; that's what a new kit is for.
+
+**Canvas format** (`src/lib/formats.js`) is the *shape*: `square` (1080×1080
+feed post, the default) or `story` (1080×1920). A deck asks for one with
+`meta.format`; failing that it gets its kit's `meta.format`; failing that,
+square. `render.js` stamps `fmt-<id>` on the slide, so a kit that supports both
+styles the difference under `.kit-<id>.fmt-story` (see `shout`). Nothing else in
+the engine hardcodes a size — preview scaling and the PNG export both read the
+resolved `CANVAS` from `src/data/active.js`.
+
+A kit helper must read `CANVAS`/`SLIDES` **inside a function**, never at module
+scope: `active.js` → `kits/index.js` → every kit is a cycle, so touching them at
+module scope is a temporal-dead-zone crash the build won't catch.
 
 ## The main task: "add a new project" (usually from a submission)
 
@@ -100,9 +113,18 @@ it. Do this:
   author-controlled — never render untrusted input unsanitized (see SECURITY.md).
 - **Privacy:** `submissions/`, `src/assets/*` **and the deck files
   (`src/data/projects/*.js`)** are gitignored on purpose — they hold PII (real
-  names, quotes, handles, emails, private photos). The only tracked deck is
-  `example.js`, which is invented. Don't un-ignore them, and never move that data
-  into a tracked file (including into a README or a commit message).
+  names, quotes, handles, emails, private photos). Don't un-ignore them, and
+  never move that data into a tracked file (including into a README or a commit
+  message).
+  - Tracked exceptions, all deliberate: `example.js` (invented), and **Stu's own
+    material** — `src/assets/stu/` plus `stu.js`, `stu-beta.js`,
+    `stu-beta-story.js`, `stu-live.js` — published by the owner's decision so
+    the Stu team can collaborate on their decks in this repo. **The repo is
+    public**, so that data is world-readable.
+  - That exception covers Stu and nothing else. Every other deck and asset
+    folder belongs to somebody who submitted a form; adding one to the
+    `.gitignore` allowlist needs that person's say-so, not just a request to
+    "share the project".
 - **Saving needs the dev server** (`npm run dev`); the built static site has no
   backend to write to, so edits there stay in the browser.
 - Keep new code in the style of the file around it; the codebase favours

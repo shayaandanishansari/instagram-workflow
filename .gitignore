@@ -19,6 +19,11 @@ _legacy/
 # e.g.  !src/assets/logo.png
 src/assets/*
 !src/assets/README.md
+# EXCEPTION — Stu's own product artwork (logo, app screenshots). Published
+# deliberately so the Stu team can work on their decks from this repo. It is the
+# team's own product, not somebody else's submission. Every OTHER project's
+# images stay ignored.
+!src/assets/stu/
 
 # Raw form submissions (the drop-zone). These contain PII — names, emails,
 # WhatsApp numbers, private team photos — so the contents are NEVER published.
@@ -38,3 +43,13 @@ src/data/projects/*
 !src/data/projects/index.js
 !src/data/projects/example.js
 !src/data/projects/README.md
+
+# EXCEPTION — the Stu decks. Published deliberately (owner's call) so the Stu
+# team can collaborate on them here. stu.js does carry the team's own full names
+# and quotes; that is accepted for THESE FOUR FILES ONLY. Every other deck in
+# this folder is somebody else's data and stays ignored — do not add to this
+# list without the deck subject's say-so.
+!src/data/projects/stu.js
+!src/data/projects/stu-beta.js
+!src/data/projects/stu-beta-story.js
+!src/data/projects/stu-live.js
