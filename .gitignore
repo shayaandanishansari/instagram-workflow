@@ -45,11 +45,9 @@ src/data/projects/*
 !src/data/projects/README.md
 
 # EXCEPTION — the Stu decks. Published deliberately (owner's call) so the Stu
-# team can collaborate on them here. stu.js does carry the team's own full names
-# and quotes; that is accepted for THESE FOUR FILES ONLY. Every other deck in
-# this folder is somebody else's data and stays ignored — do not add to this
+# team can collaborate on them here. These files do carry the team's own full
+# names and quotes; that is accepted for THESE TWO FILES ONLY. Every other deck
+# in this folder is somebody else's data and stays ignored — do not add to this
 # list without the deck subject's say-so.
-!src/data/projects/stu.js
 !src/data/projects/stu-beta.js
-!src/data/projects/stu-beta-story.js
 !src/data/projects/stu-live.js

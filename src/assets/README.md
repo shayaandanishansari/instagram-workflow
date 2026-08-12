@@ -1,6 +1,6 @@
 # src/assets/
 
-Drop your images here, **one subfolder per project** — `stu/`, `offlink/`, …
+Drop your images here, **one subfolder per project** — `stu/`, `<id>/`, …
 The loader (`src/data/assets.js`) **auto-discovers** everything under this
 folder recursively via `import.meta.glob` — there are no import lines to edit —
 and keys each image by its path relative to `src/assets/` (e.g. `stu/cover.png`).

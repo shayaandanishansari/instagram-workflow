@@ -10,7 +10,7 @@ colour, decorative blobs, a bottom wave on the cover, an accent-coloured
 
 ```
 index.js     meta { id, name } + LAYOUTS. Imports fyp.css. This is the kit's entry point.
-fyp.css      Every rule for this design, scoped .kit-fyp — plus the four themes.
+fyp.css      Every rule for this design, scoped .kit-fyp — plus the theme mechanism.
 layouts/     One file per slide type (see layouts/README.md).
 helpers.js   Decoration for THIS kit only: blobs(), treeIcon(), treeGrove().
 ```
@@ -35,13 +35,10 @@ another kit may define a `cover` that looks nothing like ours.
 - **Slide-level classes are compound**: `.kit-fyp.s-cover`, `.kit-fyp.organic-bg`
   — because `s-cover` and `kit-fyp` sit on the *same* element.
 - **Inner elements are descendants**: `.kit-fyp .eyebrow`, `.kit-fyp .qa-answer`.
-- **Themes combine both**: `.kit-fyp.theme-greenflow.s-cover .wave`.
-
-> Historical trap, now fixed: the theme rules used to be written
-> `.theme-offlink .s-cover .wave` — a *descendant* selector, even though both
-> classes sit on the same element. It only ever matched because `<body>` also
-> carried the theme class. The compound form is explicit and doesn't depend on
-> that coincidence.
+- **A theme combines both**: `.kit-fyp.theme-<name>.s-cover .wave` — write it
+  compound, not as `.theme-<name> .s-cover .wave` (a descendant selector),
+  since both classes sit on the same element; a descendant form would only
+  ever match by the coincidence of `<body>` also carrying the theme class.
 
 ## Palette and themes
 
@@ -52,15 +49,10 @@ a var remap.
 
 A **theme** is a palette variant *of this kit*: same layouts, different brand
 colours, plus the few places that hardcode a colour (the cover wave SVG, the
-background motif). Current themes, all at the bottom of `fyp.css`:
-
-| Theme | Look |
-|---|---|
-| *(none)* | The default: deep green + lime. |
-| `offlink` | Navy + gold, with a connectivity-mesh background motif. |
-| `interview` | Navy + teal. |
-| `sairaab` | Deep teal + gold. |
-| `greenflow` | Deep blue + sky-blue, with a circuit-trace tile. |
+background motif). No theme ships by default — Stu's decks all use the base
+palette declared on `.kit-fyp` above. Add one at the bottom of `fyp.css` by
+overriding the palette vars under `.kit-fyp.theme-<name>{...}` (see the comment
+there for the pattern).
 
 A deck opts in with `theme: '<name>'` in its `meta`. Themes also tint the studio
 chrome (`body.kit-fyp.theme-<x>` overrides `--paper`/`--line`/`--ink`).

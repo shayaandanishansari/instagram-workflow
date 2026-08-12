@@ -4,9 +4,9 @@
 // Images are auto-discovered from src/assets/ (recursively) via Vite's
 // import.meta.glob, so there are NO per-file import lines to maintain. Each
 // project keeps its images in its own subfolder, e.g. src/assets/stu/cover.png,
-// src/assets/offlink/logo.png — so two decks can both have a "cover.png"
+// src/assets/<id>/logo.png — so two decks can both have a "cover.png"
 // without colliding. Reference an image by its path RELATIVE to src/assets/:
-//   asset('stu/cover.png')      asset('offlink/logo.png')
+//   asset('stu/cover.png')      asset('<id>/logo.png')
 //
 // A missing file does NOT break the build — asset() returns a labelled
 // placeholder and logs a warning, so a fresh clone with no images still runs.
@@ -48,5 +48,5 @@ export function asset(name) {
 export const ASSET_NAMES = Object.keys(byName);
 
 // NOTE: the per-deck role map (logo/cover/demo…) now lives inside each project
-// file under src/data/projects/, e.g. projects/stu.js, which calls
+// file under src/data/projects/, e.g. projects/stu-beta.js, which calls
 // asset('stu/cover.png'). This module just resolves paths — it is deck-agnostic.

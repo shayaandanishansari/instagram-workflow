@@ -19,6 +19,20 @@ Three layers, and keeping them apart is the point of the structure:
 - **Deck** (`src/data/projects/<id>.js`) — *content*. Names the kit that renders
   it (`meta.kit`) and, optionally, a palette variant of that kit (`meta.theme`).
 
+## Origin
+
+Built by [Shayaan Danish Ansari](https://shayaandanishansari.com), co-founder of
+[Stu](https://stu-concierge.com) — an agentic e-commerce platform (landing page:
+[home.stu-concierge.com](https://home.stu-concierge.com)) — to generate Stu's own
+Instagram content. The two Stu decks tracked in this repo (`stu-beta.js` —
+"Stu — Open Beta (Post)" — and `stu-live.js` — "Stu Live (Post)") aren't sample
+data added for the demo; they're kept as-is as a homage to why this tool exists,
+and they double as the worked example/template for anyone adapting the repo to
+their own project. Their images (`src/assets/stu/`) are gitignored like any
+other project's, so a fresh clone renders them with labelled placeholders until
+you drop in real artwork. Nothing about the engine, kits, or workflow is
+Stu-specific — swap in a new deck and it works the same way for any product.
+
 ## Layout that matters
 
 ```
@@ -30,7 +44,7 @@ src/
     assets.js             Resolves image paths (recursive, deck-agnostic)
     projects/
       index.js            Auto-discovers every *.js with a meta.id (no registry to edit)
-      stu.js, offlink.js  One deck per file: meta{id,name,kit,theme?}, ASSETS, SLIDES
+      stu-beta.js          One deck per file: meta{id,name,kit,theme?}, ASSETS, SLIDES
   assets/<id>/            That project's images — GITIGNORED, one subfolder per project
   kits/
     index.js              Auto-discovers every kits/*/index.js with a meta.id
@@ -70,8 +84,9 @@ Two constraints the engine imposes on any kit:
   which is how "Replace photo" and the exporter find it.
 
 Themes (`meta.theme`) are palette variants *within* a kit — same layouts,
-different colours (see the four at the bottom of `fyp.css`). They cannot give you
-a different design; that's what a new kit is for.
+different colours (see the THEMES comment at the bottom of `fyp.css` for the
+pattern; none ship by default). They cannot give you a different design;
+that's what a new kit is for.
 
 **Canvas format** (`src/lib/formats.js`) is the *shape*: `square` (1080×1080
 feed post, the default) or `story` (1080×1920). A deck asks for one with
@@ -96,15 +111,15 @@ it. Do this:
 2. **Assets:** create `src/assets/<id>/` and copy the images you'll use from
    `submissions/<Project>/images/` into it (typically `logo.png`, `cover.png`,
    `demo.png`). Skip formats browsers can't render (e.g. `.NEF`).
-3. **Deck file:** copy `src/data/projects/stu.js` to `src/data/projects/<id>.js`
+3. **Deck file:** copy `src/data/projects/stu-beta.js` to `src/data/projects/<id>.js`
    and edit: `meta.id` (unique, = filename sans `.js`), `meta.name`, `meta.kit`
    (`'fyp'` unless the post wants a different design), the `ASSETS` paths
    (`asset('<id>/…')`), and the `SLIDES` (text + `file: '<id>-0N-….png'`).
-   Follow `offlink.js` as the reference for wording style.
+   Follow `stu-beta.js` as the reference for wording style.
 4. **Verify:** `npm run build` must pass. It auto-registers — no import lines to
    add anywhere. It appears in the dropdown on reload.
 
-`<id>` is a short kebab/lowercase slug (e.g. `offlink`, `stu`).
+`<id>` is a short kebab/lowercase slug (e.g. `stu`, `acme-app`).
 
 ## Conventions & guardrails
 
@@ -117,10 +132,13 @@ it. Do this:
   never move that data into a tracked file (including into a README or a commit
   message).
   - Tracked exceptions, all deliberate: `example.js` (invented), and **Stu's own
-    material** — `src/assets/stu/` plus `stu.js`, `stu-beta.js`,
-    `stu-beta-story.js`, `stu-live.js` — published by the owner's decision so
-    the Stu team can collaborate on their decks in this repo. **The repo is
-    public**, so that data is world-readable.
+    decks** — `stu-beta.js` and `stu-live.js` — published by the owner's
+    decision so the Stu team can collaborate on their decks in this repo. **The repo is
+    public**, so that data is world-readable. Stu is this project's origin
+    (see "Origin" above) and its content is already public elsewhere, so its
+    decks stay in the repo as a worked template/example rather than as a
+    project someone else needs to remove — a new user can leave them as
+    reference or delete them freely.
   - That exception covers Stu and nothing else. Every other deck and asset
     folder belongs to somebody who submitted a form; adding one to the
     `.gitignore` allowlist needs that person's say-so, not just a request to

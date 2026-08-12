@@ -35,7 +35,7 @@ To turn a submission into a carousel:
 2. **Copy the images** you want from `submissions/<Project>/images/` into
    `src/assets/<id>/` (auto-discovered — see [`src/assets/`](../src/assets/)).
    Skip formats browsers can't render (e.g. `.NEF`, `.HEIC` — convert first).
-3. **Write the deck**: copy `src/data/projects/stu.js` to
+3. **Write the deck**: copy `src/data/projects/stu-beta.js` to
    `src/data/projects/<id>.js` and fill in its `meta`, `ASSETS` role map, and
    `SLIDES` — see [`src/data/projects/`](../src/data/projects/). It auto-registers.
 4. **Verify** with `npm run build`.

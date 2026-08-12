@@ -1,6 +1,6 @@
 // ============================================================================
 // Vite dev plugin: persist in-browser text edits back into the ACTIVE project
-// file under src/data/projects/ (e.g. stu.js, offlink.js).
+// file under src/data/projects/ (e.g. stu.js, <id>.js).
 // ----------------------------------------------------------------------------
 // The studio marks slide text `contenteditable`. This plugin adds a dev-only
 // endpoint (POST /__save-slide) that the browser hits on blur; the request
@@ -186,7 +186,7 @@ export function saveSlidesPlugin() {
     // Resolve a request's target project file safely inside projectsDir. The
     // filename comes from the browser, so reject anything that isn't a bare
     // "<name>.js" living directly in the projects folder (no path traversal).
-    // Defaults to stu.js if a client omits `file` (older payloads).
+    // Defaults to stu-beta.js if a client omits `file` (older payloads).
     handleHotUpdate(ctx) {
       // Swallow the HMR event for our own write so typing isn't interrupted by a
       // full reload (the DOM already shows the edit). Manual code edits still HMR.
@@ -197,7 +197,7 @@ export function saveSlidesPlugin() {
     },
     configureServer(server) {
       const resolveTarget = (file) => {
-        const name = path.basename(String(file || 'stu.js')); // strips any dir parts
+        const name = path.basename(String(file || 'stu-beta.js')); // strips any dir parts
         if (name !== file || !/^[\w.-]+\.js$/.test(name) || name === 'index.js') {
           throw new Error(`invalid project file: ${file}`);
         }

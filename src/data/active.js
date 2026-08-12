@@ -4,7 +4,7 @@
 // Which project is open is remembered in localStorage, so it survives reloads
 // and dev-server restarts. render.js / export.js import SLIDES + ASSETS from
 // HERE (not from a specific project file), so switching projects is just:
-//   setActiveId('offlink'); location.reload();
+//   setActiveId('<id>'); location.reload();
 // A reload is intentional — SLIDES/ASSETS are resolved once at module load,
 // which keeps render/export simple (no reactive re-wiring).
 // ============================================================================

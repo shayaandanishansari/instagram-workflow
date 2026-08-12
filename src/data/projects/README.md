@@ -17,7 +17,7 @@ export const meta = {
                              //   and the localStorage key
   name:  'Stu — Personal Food Concierge',   // label in the Project dropdown
   kit:   'fyp',              // WHICH DESIGN renders it (a folder in src/kits/)
-  theme: 'greenflow',        // optional: a palette variant WITHIN that kit
+  theme: 'myTheme',          // optional: a palette variant WITHIN that kit
 };
 
 export const ASSETS = {      // role map: which file plays which part
@@ -58,10 +58,10 @@ in the dropdown.
 ## Adding a deck
 
 See the "add a new project" section in `CLAUDE.md` for the full flow from a raw
-submission. In short: copy `stu.js` → `<id>.js`, change `meta`, point `ASSETS` at
+submission. In short: copy `stu-beta.js` → `<id>.js`, change `meta`, point `ASSETS` at
 `src/assets/<id>/`, write the `SLIDES`, and run `npm run build`.
 
-Use `offlink.js` as the reference for wording/tone.
+Use `stu-beta.js` (or `example.js`) as the reference for wording/tone.
 
 ## ⚠ These files are GITIGNORED — they contain PII
 
@@ -74,11 +74,15 @@ src/data/projects/*
 !src/data/projects/index.js
 !src/data/projects/example.js
 !src/data/projects/README.md
+!src/data/projects/stu-beta.js
+!src/data/projects/stu-live.js
 ```
 
-Only three files here are tracked: `index.js` (the registry — code, no PII), this
-README, and **`example.js`** — an invented deck with no real person in it, which
-doubles as the template and keeps a fresh clone runnable.
+Five files here are tracked: `index.js` (the registry — code, no PII), this
+README, **`example.js`** — an invented deck with no real person in it, which
+doubles as the template and keeps a fresh clone runnable — and the two Stu
+decks (`stu-beta.js`, `stu-live.js`), published deliberately since it's the
+owner's own product.
 
 Your real decks live on disk and work exactly as normal; they're just never
 published. Don't un-ignore them, and don't copy their copy into a tracked file.

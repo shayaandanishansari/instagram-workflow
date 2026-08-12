@@ -6,15 +6,14 @@ import { asset } from '../assets.js';
    The launch carousel for open beta, 21 July 2026. Stu speaking as a product,
    not as an FYP submission — so it renders with the `bowl` kit (Stu's own brand:
    dotted chat canvas, forest sidebar, bowl-green, editorial serif) rather than
-   `fyp`. Its story twin is stu-beta-story.js, same voice, one frame.
+   `fyp`.
 
    Content is drawn from the two FYP write-ups in
    submissions/FYP_Showcase/Stu - Personal Food Concierge/ — the household
    problem from Abdul Tawab's, the hero feature from Shayaan's.
 
-   ASSETS: this deck shares src/assets/stu/ with the FYP deck rather than
-   duplicating the same logo — asset() paths are namespaced by folder, not by
-   deck, so both point at the one set of Stu brand images.
+   ASSETS: images live in src/assets/stu/ (gitignored — add your own logo/app
+   screenshot there; the studio falls back to labelled placeholders until you do).
    ========================================================================== */
 
 export const meta = {

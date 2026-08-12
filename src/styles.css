@@ -13,7 +13,7 @@
 
    The vars below are the CHROME palette only. Deck palettes (--deep, --lime, …)
    live in each kit's stylesheet, so a new kit can't be tinted by the old one.
-   A kit's theme may still override these (see body.kit-fyp.theme-offlink) to
+   A kit's theme may still override these (see the THEMES comment in fyp.css) to
    tint the studio toward the brand it's showing.
    ========================================================================== */
 :root{

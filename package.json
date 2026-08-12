@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "license": "AGPL-3.0-or-later",
   "description": "Data-driven 1080x1080 Instagram post studio for the Stu FYP deck.",
   "scripts": {
     "dev": "vite",

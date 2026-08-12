@@ -3,7 +3,9 @@ import { asset } from '../assets.js';
 /* ============================================================================
    PROJECT: Example — a template deck (SAFE TO PUBLISH)
    ----------------------------------------------------------------------------
-   This is the ONLY deck file tracked in git. Every real deck holds a team's
+   This is the only INVENTED deck file tracked in git (the two Stu decks,
+   stu-beta.js and stu-live.js, are also tracked — that's the owner's own
+   product, published deliberately). Every other real deck holds a team's
    personal details (names, quotes, handles) taken from an FYP submission, so
    src/data/projects/*.js is gitignored — see .gitignore and SECURITY.md.
 

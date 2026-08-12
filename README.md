@@ -1,12 +1,15 @@
 # Stu — Instagram Post Studio
 
-A small, data-driven studio for building the Stu FYP Instagram carousel. Every
-slide is a live, editable 1080×1080 card; click any text to edit, swap photos
-per-slide, and export true 1080×1080 PNGs (one at a time or the whole deck).
+A small, data-driven studio for building Instagram carousels. Every slide is a
+live, editable 1080×1080 card; click any text to edit, swap photos per-slide,
+and export true 1080×1080 PNGs (one at a time or the whole deck).
 
 Fully client-side — no server, no accounts, no data leaves your browser. The
 only runtime dependency is [`html2canvas`](https://html2canvas.hertzen.com/)
 (it powers PNG export).
+
+Nothing about the tool is tied to one product — see [Origin & credits](#origin--credits)
+below for why it's named after Stu and how to make it yours.
 
 ## Run it
 
@@ -54,9 +57,9 @@ src/
     active.js           The open project → re-exports its SLIDES + ASSETS
     projects/           One file per project (deck) — auto-discovered
       index.js          Registry: finds every project + the default
-      stu.js            Deck: Stu — Personal Food Concierge
-      offlink.js        Deck: Offlink — Offline P2P Payments
-  assets/               Your images, one subfolder per project (stu/, offlink/)
+      stu-beta.js       Deck: Stu — Open Beta (Post) — the origin project, kept as a template
+      stu-live.js       Deck: Stu Live (Post)
+  assets/               Your images, one subfolder per project (stu/, <id>/, …)
                         Auto-discovered, gitignored (see below)
 scripts/                One-off CLI tooling (e.g. pull a submission from Drive)
 submissions/            Raw form downloads (drop-zone) — gitignored, see its README
@@ -77,13 +80,13 @@ colour," you wanted a kit and reached for a theme. See
 
 The studio holds **one deck per project** and you switch between them from the
 **Project** dropdown in the top bar. Each project is a file in
-`src/data/projects/` (e.g. `stu.js`, `offlink.js`) that exports its own
+`src/data/projects/` (e.g. `stu.js`, `<id>.js`) that exports its own
 `SLIDES` + `ASSETS`. Switching remembers your choice (localStorage) and the
 title, logo, slide count and export filenames all follow the active deck.
 
 **Add a new project:**
 
-1. Copy `src/data/projects/stu.js` to `src/data/projects/<id>.js` and change
+1. Copy `src/data/projects/stu-beta.js` to `src/data/projects/<id>.js` and change
    `meta.id` (unique) + `meta.name`.
 2. Drop that project's images in `src/assets/<id>/` and point its `ASSETS` map
    at them (e.g. `asset('<id>/cover.png')`).
@@ -105,7 +108,7 @@ then fill in that project's `src/data/projects/<id>.js`).
 ## Editing the deck
 
 Everything flows from the **active project file** in `src/data/projects/`
-(e.g. `stu.js`) — there's no hardcoded slide count anywhere.
+(e.g. `stu-beta.js`) — there's no hardcoded slide count anywhere.
 
 - **Edit text** — change the strings in a slide object. They may contain
   `<b>…</b>` and `<span class="mark">…</span>` (the lime highlight).
@@ -129,7 +132,7 @@ Everything flows from the **active project file** in `src/data/projects/`
 The loader is **asset-agnostic**: every file under `src/assets/` is
 auto-discovered recursively (no import lines to maintain), keyed by its path
 relative to `src/assets/`. Each project keeps its images in its own subfolder
-(`src/assets/stu/`, `src/assets/offlink/`) so two decks can both have a
+(`src/assets/stu/`, `src/assets/<id>/`) so two decks can both have a
 `cover.png` without colliding. A missing image falls back to a labelled
 placeholder instead of breaking the build.
 
@@ -163,6 +166,26 @@ That's a **kit**, not a layout — see [`src/kits/README.md`](./src/kits/README.
   slide content is injected as HTML, so **never render untrusted input without
   sanitizing it**. As shipped, all content is author-controlled and safe.
 
+## Origin & credits
+
+Built by **Shayaan Danish Ansari** — co-founder of [**Stu**](https://stu-concierge.com),
+an agentic e-commerce platform (landing page: [home.stu-concierge.com](https://home.stu-concierge.com))
+— to generate Stu's own Instagram content.
+
+The two Stu decks tracked in this repo — `stu-beta.js` ("Stu — Open Beta
+(Post)") and `stu-live.js` ("Stu Live (Post)") — aren't sample data, they're
+the real thing, kept here as a homage to why this tool exists, and they double
+as the worked example/template for anyone adapting the repo to their own
+project. Their images are gitignored like any other project's — a fresh clone
+renders them with labelled placeholders until you add your own artwork under
+`src/assets/stu/`. The engine, kits, and workflow are all product-agnostic:
+add your own deck under `src/data/projects/` and it works the same way.
+
+- Website: [shayaandanishansari.com](https://shayaandanishansari.com)
+- Email: [shayaan0303@gmail.com](mailto:shayaan0303@gmail.com)
+- GitHub: [github.com/shayaandanishansari](https://github.com/shayaandanishansari)
+- LinkedIn: [linkedin.com/in/shayaan-danish-ansari-43a852246](https://www.linkedin.com/in/shayaan-danish-ansari-43a852246/)
+
 ## License
 
-[MIT](./LICENSE) © 2026 Shayaan Danish
+[AGPL-3.0](./LICENSE) © 2026 Shayaan Danish
